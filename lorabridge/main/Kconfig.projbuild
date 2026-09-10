@@ -1,0 +1,29 @@
+menu "EasyBridge Board"
+
+    choice EB_BOARD
+        prompt "Target board"
+        default EB_BOARD_S3_E220 if IDF_TARGET_ESP32S3
+        default EB_BOARD_C6_E220 if IDF_TARGET_ESP32C6
+        default EB_BOARD_T3_V161 if IDF_TARGET_ESP32
+        help
+            Select the hardware EasyBridge runs on.
+            Board headers live in main/boards/.
+
+        config EB_BOARD_S3_E220
+            bool "ESP32-S3 + EBYTE E220-400T30D (UART, 433 MHz, 30 dBm)"
+            depends on IDF_TARGET_ESP32S3
+
+        config EB_BOARD_C6_E220
+            bool "ESP32-C6 + EBYTE E220-400T30D (UART, 433 MHz, 30 dBm)"
+            depends on IDF_TARGET_ESP32C6
+
+        config EB_BOARD_T3_V161
+            bool "LilyGO T3 v1.6.1 (SX1276 SPI, 868/915 MHz, battery)"
+            depends on IDF_TARGET_ESP32
+
+        config EB_BOARD_S3_E22M33S
+            bool "ESP32-S3 + EBYTE E22-400M33S (SX1268 SPI, 433 MHz, 33 dBm)"
+            depends on IDF_TARGET_ESP32S3
+    endchoice
+
+endmenu

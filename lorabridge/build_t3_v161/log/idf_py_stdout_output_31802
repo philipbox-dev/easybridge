@@ -1,0 +1,67 @@
+Command: ninja flash
+[1/5] cd /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/esp-idf/esptool_py && /home/philipbox/.espressif/python_env/idf5.5_py3.14_env/bin/python /home/philipbox/esp/esp-idf-v5.5.1/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/partition_table/partition-table.bin /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/easybridge.bin
+easybridge.bin binary size 0xa33b0 bytes. Smallest app partition is 0x100000 bytes. 0x5cc50 bytes (36%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] cd /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/bootloader/esp-idf/esptool_py && /home/philipbox/.espressif/python_env/idf5.5_py3.14_env/bin/python /home/philipbox/esp/esp-idf-v5.5.1/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/bootloader/bootloader.bin
+Bootloader binary size 0x6680 bytes. 0x980 bytes (8%) free.
+[3/5] No install step for 'bootloader'
+[4/5] Completed 'bootloader'
+[4/5] cd /home/philipbox/esp/esp-idf-v5.5.1/components/esptool_py && /usr/bin/cmake -D IDF_PATH=/home/philipbox/esp/esp-idf-v5.5.1 -D "SERIAL_TOOL=/home/philipbox/.espressif/python_env/idf5.5_py3.14_env/bin/python;;/home/philipbox/esp/esp-idf-v5.5.1/components/esptool_py/esptool/esptool.py;--chip;esp32" -D "SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args" -D WORKING_DIRECTORY=/home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161 -P /home/philipbox/esp/esp-idf-v5.5.1/components/esptool_py/run_serial_tool.cmake
+esptool.py --chip esp32 -p /dev/ttyACM0 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 bootloader/bootloader.bin 0x10000 easybridge.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.12.dev1
+Serial port /dev/ttyACM0
+Connecting.....
+Chip is ESP32-PICO-D4 (revision v1.0)
+Features: WiFi, BT, Dual Core, 240MHz, Embedded Flash, VRef calibration in efuse, Coding Scheme None
+Crystal is 40MHz
+MAC: 4c:75:25:d6:8b:d0
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00001000 to 0x00007fff...
+Flash will be erased from 0x00010000 to 0x000b3fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 26240 bytes to 16495...
+Writing at 0x00001000... (50 %)
+Writing at 0x000075ef... (100 %)
+Wrote 26240 bytes (16495 compressed) at 0x00001000 in 0.8 seconds (effective 277.4 kbit/s)...
+Hash of data verified.
+Compressed 668592 bytes to 396032...
+Writing at 0x00010000... (4 %)
+Writing at 0x0001b700... (8 %)
+Writing at 0x000279ae... (12 %)
+Writing at 0x00031a8a... (16 %)
+Writing at 0x0003722b... (20 %)
+Writing at 0x0003d3b2... (24 %)
+Writing at 0x00042a99... (28 %)
+Writing at 0x0004834e... (32 %)
+Writing at 0x0004e082... (36 %)
+Writing at 0x00053d3a... (40 %)
+Writing at 0x0005a43d... (44 %)
+Writing at 0x000604f7... (48 %)
+Writing at 0x00066be6... (52 %)
+Writing at 0x0006cb00... (56 %)
+Writing at 0x00072b59... (60 %)
+Writing at 0x0007859b... (64 %)
+Writing at 0x0007e132... (68 %)
+Writing at 0x00083b92... (72 %)
+Writing at 0x0008d4bb... (76 %)
+Writing at 0x0009485d... (80 %)
+Writing at 0x0009ae58... (84 %)
+Writing at 0x000a089c... (88 %)
+Writing at 0x000a5db0... (92 %)
+Writing at 0x000abc05... (96 %)
+Writing at 0x000b1f8e... (100 %)
+Wrote 668592 bytes (396032 compressed) at 0x00010000 in 9.2 seconds (effective 584.0 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 103...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (103 compressed) at 0x00008000 in 0.1 seconds (effective 466.8 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...

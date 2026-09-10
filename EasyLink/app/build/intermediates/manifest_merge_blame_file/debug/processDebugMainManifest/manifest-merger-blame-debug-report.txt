@@ -1,0 +1,385 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="easylink.yvak.inc"
+4    android:versionCode="14"
+5    android:versionName="1.7.6" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="29"
+9        android:targetSdkVersion="36" />
+10
+11    <!-- BLE -->
+12    <uses-permission
+12-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:6:5-95
+13        android:name="android.permission.BLUETOOTH"
+13-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:6:22-65
+14        android:maxSdkVersion="30" />
+14-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:6:66-92
+15    <uses-permission
+15-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:7:5-101
+16        android:name="android.permission.BLUETOOTH_ADMIN"
+16-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:7:22-71
+17        android:maxSdkVersion="30" />
+17-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:7:72-98
+18    <uses-permission
+18-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:8:5-10:31
+19        android:name="android.permission.BLUETOOTH_SCAN"
+19-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:8:22-70
+20        android:usesPermissionFlags="neverForLocation" />
+20-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:9:9-55
+21    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+21-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:11:5-76
+21-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:11:22-73
+22    <!-- Локация: скан BLE на API 29-30 + GPS-маячки -->
+23    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+23-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:13:5-79
+23-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:13:22-76
+24    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+24-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:14:5-81
+24-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:14:22-78
+25    <!-- Аудио: голосовые и PTT -->
+26    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+26-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:16:5-71
+26-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:16:22-68
+27    <!-- Сервис -->
+28    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+28-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:18:5-77
+28-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:18:22-74
+29    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+29-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:19:5-94
+29-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:19:22-91
+30    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+30-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:20:5-86
+30-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:20:22-83
+31    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+31-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:21:5-88
+31-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:21:22-85
+32    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+32-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:22:5-77
+32-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:22:22-74
+33    <uses-permission android:name="android.permission.VIBRATE" />
+33-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:23:5-66
+33-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:23:22-63
+34    <uses-permission android:name="android.permission.WAKE_LOCK" />
+34-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:24:5-68
+34-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:24:22-65
+35    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+35-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:25:5-81
+35-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:25:22-78
+36    <!-- Карта OSM (кэш тайлов) -->
+37    <uses-permission android:name="android.permission.INTERNET" />
+37-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:27:5-67
+37-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:27:22-64
+38    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+38-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:28:5-79
+38-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:28:22-76
+39    <!-- QR-сканер -->
+40    <uses-permission android:name="android.permission.CAMERA" />
+40-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:30:5-65
+40-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:30:22-62
+41
+42    <uses-feature
+42-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:32:5-90
+43        android:name="android.hardware.bluetooth_le"
+43-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:32:19-63
+44        android:required="true" />
+44-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:32:64-87
+45    <uses-feature
+45-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:33:5-85
+46        android:name="android.hardware.camera"
+46-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:33:19-57
+47        android:required="false" />
+47-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:33:58-82
+48
+49    <permission
+49-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+50        android:name="easylink.yvak.inc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+50-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+51        android:protectionLevel="signature" />
+51-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+52
+53    <uses-permission android:name="easylink.yvak.inc.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+53-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+53-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+54
+55    <supports-screens
+55-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:9:5-12:40
+56        android:anyDensity="true"
+56-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:10:9-34
+57        android:largeScreens="true"
+57-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:11:9-36
+58        android:normalScreens="true" />
+58-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:12:9-37
+59
+60    <uses-feature
+60-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:14:5-16:36
+61        android:name="android.hardware.location.network"
+61-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:15:9-57
+62        android:required="false" />
+62-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:16:9-33
+63    <uses-feature
+63-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:17:5-19:36
+64        android:name="android.hardware.location.gps"
+64-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:18:9-53
+65        android:required="false" />
+65-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:19:9-33
+66    <uses-feature
+66-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:20:5-22:36
+67        android:name="android.hardware.telephony"
+67-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:21:9-50
+68        android:required="false" />
+68-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:22:9-33
+69    <uses-feature
+69-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:23:5-25:36
+70        android:name="android.hardware.wifi"
+70-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:24:9-45
+71        android:required="false" />
+71-->[org.osmdroid:osmdroid-android:6.1.20] /home/philipbox/.gradle/caches/9.1.0/transforms/c6012f7c30428d3ee017761629c67c7b/transformed/osmdroid-android-6.1.20/AndroidManifest.xml:25:9-33
+72    <uses-feature
+72-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:28:5-30:36
+73        android:name="android.hardware.camera.front"
+73-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:29:9-53
+74        android:required="false" /> <!-- TODO replace above two with next line after Android 4.2 -->
+74-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:30:9-33
+75    <!-- <uses-feature android:name="android.hardware.camera.any"/> -->
+76    <uses-feature
+76-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:33:5-35:36
+77        android:name="android.hardware.camera.autofocus"
+77-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:34:9-57
+78        android:required="false" />
+78-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:35:9-33
+79    <uses-feature
+79-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:36:5-38:36
+80        android:name="android.hardware.camera.flash"
+80-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:37:9-53
+81        android:required="false" />
+81-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:38:9-33
+82    <uses-feature
+82-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:39:5-41:36
+83        android:name="android.hardware.screen.landscape"
+83-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:40:9-57
+84        android:required="false" />
+84-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:41:9-33
+85
+86    <application
+86-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:35:5-93:19
+87        android:name="easylink.yvak.inc.App"
+87-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:36:9-28
+88        android:allowBackup="true"
+88-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:37:9-35
+89        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+89-->[androidx.core:core:1.13.1] /home/philipbox/.gradle/caches/9.1.0/transforms/8554958bf3c62318269c99f3141a3d2a/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+90        android:debuggable="true"
+91        android:extractNativeLibs="false"
+92        android:icon="@mipmap/ic_launcher"
+92-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:38:9-43
+93        android:label="@string/app_name"
+93-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:39:9-41
+94        android:localeConfig="@xml/locales_config"
+94-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:40:9-51
+95        android:supportsRtl="true"
+95-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:41:9-35
+96        android:theme="@style/Theme.EasyLink" >
+96-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:42:9-46
+97        <activity
+97-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:44:9-56:20
+98            android:name="easylink.yvak.inc.MainActivity"
+98-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:45:13-41
+99            android:configChanges="orientation|screenSize|keyboardHidden"
+99-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:50:13-74
+100            android:exported="true"
+100-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:46:13-36
+101            android:launchMode="singleTask"
+101-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:47:13-44
+102            android:showWhenLocked="true"
+102-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:48:13-42
+103            android:turnScreenOn="true"
+103-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:49:13-40
+104            android:windowSoftInputMode="adjustResize" >
+104-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:51:13-55
+105            <intent-filter>
+105-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:52:13-55:29
+106                <action android:name="android.intent.action.MAIN" />
+106-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:53:17-69
+106-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:53:25-66
+107
+108                <category android:name="android.intent.category.LAUNCHER" />
+108-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:54:17-77
+108-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:54:27-74
+109            </intent-filter>
+110        </activity>
+111
+112        <service
+112-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:58:9-61:83
+113            android:name="easylink.yvak.inc.ble.BridgeService"
+113-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:59:13-46
+114            android:exported="false"
+114-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:60:13-37
+115            android:foregroundServiceType="connectedDevice|location|microphone" />
+115-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:61:13-80
+116
+117        <receiver
+117-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:63:9-72:20
+118            android:name="easylink.yvak.inc.widget.EasyLinkWidget"
+118-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:64:13-50
+119            android:exported="true" >
+119-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:65:13-36
+120            <intent-filter>
+120-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:66:13-68:29
+121                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+121-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:67:17-84
+121-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:67:25-81
+122            </intent-filter>
+123
+124            <meta-data
+124-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:69:13-71:55
+125                android:name="android.appwidget.provider"
+125-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:70:17-58
+126                android:resource="@xml/widget_info" />
+126-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:71:17-52
+127        </receiver>
+128
+129        <provider
+130            android:name="androidx.core.content.FileProvider"
+130-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:75:13-62
+131            android:authorities="easylink.yvak.inc.fileprovider"
+131-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:76:13-64
+132            android:exported="false"
+132-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:77:13-37
+133            android:grantUriPermissions="true" >
+133-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:78:13-47
+134            <meta-data
+134-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:79:13-81:54
+135                android:name="android.support.FILE_PROVIDER_PATHS"
+135-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:80:17-67
+136                android:resource="@xml/file_paths" />
+136-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:81:17-51
+137        </provider>
+138
+139        <!-- Per-app locale для API < 33 -->
+140        <service
+140-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:85:9-92:19
+141            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+141-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:86:13-82
+142            android:enabled="false"
+142-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:87:13-36
+143            android:exported="false" >
+143-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:88:13-37
+144            <meta-data
+144-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:89:13-91:40
+145                android:name="autoStoreLocales"
+145-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:90:17-48
+146                android:value="true" />
+146-->/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/AndroidManifest.xml:91:17-37
+147        </service>
+148
+149        <meta-data
+149-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:12:9-14:33
+150            android:name="com.huawei.wearengine.sdk.api_level"
+150-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:13:13-63
+151            android:value="5" />
+151-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:14:13-30
+152
+153        <activity
+153-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:16:9-22:20
+154            android:name="com.huawei.wearengine.ClientHubActivity"
+154-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:17:13-67
+155            android:configChanges="fontScale|uiMode"
+155-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:18:13-53
+156            android:excludeFromRecents="true"
+156-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:19:13-46
+157            android:exported="false"
+157-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:20:13-37
+158            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+158-->[com.huawei.hms:wearengine:5.0.1.301] /home/philipbox/.gradle/caches/9.1.0/transforms/84269f109d6795dd8508c8b6128c1297/transformed/wearengine-5.0.1.301/AndroidManifest.xml:21:13-72
+159        </activity>
+160        <activity
+160-->[androidx.compose.ui:ui-tooling-android:1.7.2] /home/philipbox/.gradle/caches/9.1.0/transforms/5f97c312cf3e62a24c40dde839d46e73/transformed/ui-tooling-release/AndroidManifest.xml:23:9-25:39
+161            android:name="androidx.compose.ui.tooling.PreviewActivity"
+161-->[androidx.compose.ui:ui-tooling-android:1.7.2] /home/philipbox/.gradle/caches/9.1.0/transforms/5f97c312cf3e62a24c40dde839d46e73/transformed/ui-tooling-release/AndroidManifest.xml:24:13-71
+162            android:exported="true" />
+162-->[androidx.compose.ui:ui-tooling-android:1.7.2] /home/philipbox/.gradle/caches/9.1.0/transforms/5f97c312cf3e62a24c40dde839d46e73/transformed/ui-tooling-release/AndroidManifest.xml:25:13-36
+163
+164        <provider
+164-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:24:9-32:20
+165            android:name="androidx.startup.InitializationProvider"
+165-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:25:13-67
+166            android:authorities="easylink.yvak.inc.androidx-startup"
+166-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:26:13-68
+167            android:exported="false" >
+167-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:27:13-37
+168            <meta-data
+168-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:29:13-31:52
+169                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+169-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:30:17-78
+170                android:value="androidx.startup" />
+170-->[androidx.lifecycle:lifecycle-process:2.8.7] /home/philipbox/.gradle/caches/9.1.0/transforms/dafccfe240fbc93ae17d6856f3385957/transformed/lifecycle-process-2.8.7/AndroidManifest.xml:31:17-49
+171            <meta-data
+171-->[androidx.emoji2:emoji2:1.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/3b40475cb00008db2f5d847a7e726417/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+172                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+172-->[androidx.emoji2:emoji2:1.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/3b40475cb00008db2f5d847a7e726417/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+173                android:value="androidx.startup" />
+173-->[androidx.emoji2:emoji2:1.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/3b40475cb00008db2f5d847a7e726417/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+174            <meta-data
+174-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+175                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+175-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+176                android:value="androidx.startup" />
+176-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+177        </provider>
+178
+179        <receiver
+179-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+180            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+180-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+181            android:directBootAware="false"
+181-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+182            android:enabled="true"
+182-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+183            android:exported="true"
+183-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+184            android:permission="android.permission.DUMP" >
+184-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+185            <intent-filter>
+185-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+186                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+186-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+186-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+187            </intent-filter>
+188            <intent-filter>
+188-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+189                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+189-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+189-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+190            </intent-filter>
+191            <intent-filter>
+191-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+192                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+192-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+192-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+193            </intent-filter>
+194            <intent-filter>
+194-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+195                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+195-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+195-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/philipbox/.gradle/caches/9.1.0/transforms/bacac2b7f5f402c99de870529dc806e6/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+196            </intent-filter>
+197        </receiver>
+198
+199        <activity
+199-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:47:9-53:63
+200            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+200-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:48:13-74
+201            android:clearTaskOnLaunch="true"
+201-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:49:13-45
+202            android:screenOrientation="sensorLandscape"
+202-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:50:13-56
+203            android:stateNotNeeded="true"
+203-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:51:13-42
+204            android:theme="@style/zxing_CaptureTheme"
+204-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:52:13-54
+205            android:windowSoftInputMode="stateAlwaysHidden" />
+205-->[com.journeyapps:zxing-android-embedded:4.3.0] /home/philipbox/.gradle/caches/9.1.0/transforms/904d6a4962185de3c5b3bce0ca05d423/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:53:13-60
+206    </application>
+207
+208</manifest>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ net.name }} — вход</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, sans-serif; background: #0f1216; color: #e6e9ee;
+    display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+  .box { width: 100%; max-width: 360px; background: #171c23; border: 1px solid #232a34;
+    border-radius: 16px; padding: 28px 26px; }
+  h1 { font-size: 1.2rem; margin: 0 0 2px; }
+  .net { color: #4da3ff; font-size: .85rem; }
+  p { color: #98a2b3; font-size: .85rem; line-height: 1.5; }
+  input { width: 100%; padding: 11px 14px; margin-top: 14px; border-radius: 10px;
+    border: 1px solid #2a323d; background: #0f1216; color: inherit; font: inherit; }
+  button { width: 100%; padding: 11px; margin-top: 14px; border: 0; border-radius: 10px;
+    background: #4da3ff; color: #0f1216; font: inherit; font-weight: 600; cursor: pointer; }
+  .err { color: #f87171; font-size: .85rem; margin-top: 12px; }
+</style>
+</head>
+<body>
+<form class="box" method="post" action="{{ url_for('lorachat.member_login', uid=member.uid) }}">
+  <h1>{{ member.display_name or member.username }}</h1>
+  <div class="net">{{ net.name }}</div>
+  <p>Ссылка личная, но одной её мало: введите пароль, который выдал хост сети.</p>
+  <input type="password" name="password" placeholder="Пароль" autofocus required>
+  <button type="submit">Войти</button>
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+</form>
+</body>
+</html>

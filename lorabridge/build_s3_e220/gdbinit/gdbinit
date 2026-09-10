@@ -1,0 +1,2 @@
+source /home/philipbox/easybridge-v2.9/lorabridge/build_s3_e220/gdbinit/symbols
+source /home/philipbox/easybridge-v2.9/lorabridge/build_s3_e220/gdbinit/connect

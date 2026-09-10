@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/xml_locales_config.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/xml/locales_config.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/drawable_widget_bg.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/drawable/widget_bg.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/xml_file_paths.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/xml/file_paths.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/xml_widget_info.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/xml/widget_info.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/drawable_ic_notif.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/drawable/ic_notif.xml"
+    },
+    {
+        "merged": "easylink.yvak.inc.app-debug-60:/layout_widget_easylink.xml.flat",
+        "source": "easylink.yvak.inc.app-main-62:/layout/widget_easylink.xml"
+    }
+]

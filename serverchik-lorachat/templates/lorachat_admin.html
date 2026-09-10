@@ -1,0 +1,270 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="lc-wrap">
+  <a class="lc-back" href="{{ url_for('lorachat.index') }}">← все сети</a>
+  <h1>{{ net.name }}</h1>
+  <p class="lc-lead">
+    Участнику не нужен аккаунт на сайте: он получает логин, пароль и
+    персональную ссылку. Пароль показывается <b>один раз</b> — потом
+    только сброс.
+  </p>
+
+  {% if fresh %}
+    {% if fresh.error %}
+      <div class="lc-creds lc-bad">{{ fresh.error }}</div>
+    {% else %}
+      <div class="lc-creds">
+        <h3>Данные для {{ fresh.username }}</h3>
+        <p>Передайте их лично. На этой странице они больше не появятся.</p>
+        <dl>
+          <dt>Логин</dt><dd><code>{{ fresh.username }}</code></dd>
+          <dt>Пароль</dt><dd><code>{{ fresh.password }}</code></dd>
+          <dt>Ссылка</dt><dd><code>{{ fresh.link }}</code></dd>
+        </dl>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <section>
+    <h2>Участники</h2>
+    <table class="lc-table">
+      <thead><tr><th>Кто</th><th>Логин</th><th>Узел в эфире</th><th>Ссылка</th><th></th></tr></thead>
+      <tbody>
+      {% for m in members %}
+        <tr class="{{ '' if m.active else 'lc-off' }}">
+          <td>
+            {{ m.display_name or m.username }}
+            {% if m.is_host %}<span class="lc-badge">хост</span>{% endif %}
+            {% if m.id in online %}<span class="lc-badge on">в сети</span>{% endif %}
+          </td>
+          <td><code>{{ m.username }}</code></td>
+          <td>{% if m.node_id %}<code>{{ m.node_id }}</code>
+              {% else %}<span class="lc-dim">телефон ещё не подключался</span>{% endif %}</td>
+          <td><code class="lc-link">{{ url_for('lorachat.chat', uid=m.uid, _external=True) }}</code></td>
+          <td class="lc-actions">
+            <form method="post" action="{{ url_for('lorachat.member_reset', slug=net.slug, mid=m.id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button title="Выдать новый пароль">пароль</button>
+            </form>
+            {% if not m.is_host %}
+              <form method="post" action="{{ url_for('lorachat.member_toggle', slug=net.slug, mid=m.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button title="{{ 'Отключить' if m.active else 'Включить' }}">
+                  {{ 'выкл' if m.active else 'вкл' }}</button>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <form method="post" action="{{ url_for('lorachat.member_add', slug=net.slug) }}" class="lc-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input name="username" placeholder="логин" maxlength="40" required>
+      <input name="display_name" placeholder="имя (необязательно)" maxlength="60">
+      <input name="node_id" placeholder="node_id, 0x1A2B3C4D" maxlength="16">
+      <button type="submit">Добавить</button>
+    </form>
+    <p class="lc-hint">
+      <b>node_id</b> можно не заполнять: он привяжется сам, когда участник
+      первый раз войдёт из приложения EasyLink. Нужен он для того, чтобы
+      сервер узнавал его сообщения, пришедшие из эфира.
+    </p>
+  </section>
+
+  <section>
+    <h2>Устройства</h2>
+    <p class="lc-hint">
+      Датчики и реле, у которых нет телефона. Заводить их руками не
+      нужно: устройство само рассказывает о себе в эфир, и через минуту
+      после включения появляется здесь.
+    </p>
+    {% if devices %}
+      {% for d in devices %}
+        <div class="lc-dev">
+          <header>
+            <b>{{ d.name }}</b>
+            <code>{{ d.node_id }}</code>
+            {% if d.stale %}<span class="lc-badge warn">молчит</span>
+            {% else %}<span class="lc-badge on">на связи</span>{% endif %}
+            {% if d.rssi %}<span class="lc-dim">RSSI {{ d.rssi }}</span>{% endif %}
+          </header>
+          <div class="lc-vals">
+            {% for f in d.fields %}
+              <span><i>{{ f.name }}</i>
+                {{ d.values.get(f.i|string, '—') }} {{ f.unit }}</span>
+            {% endfor %}
+          </div>
+          {% if d.cmds %}
+            <div class="lc-dim" style="font-size:.78rem">
+              команды: {% for c in d.cmds %}{{ c.name }} (#{{ c.id }}){% if not loop.last %}, {% endif %}{% endfor %}
+            </div>
+          {% endif %}
+
+          <details>
+            <summary>Виджет: подписи и вычисляемые значения</summary>
+            <p class="lc-hint">
+              Выражение считается из показаний устройства. Доступны имена
+              полей латиницей в нижнем регистре, арифметика и функции
+              <code>round, abs, min, max, clamp, floor, ceil, sqrt</code>.
+              Например: <code>round(t / 10, 1)</code> или
+              <code>"дождь" if rain &gt; 0 else "сухо"</code>.<br>
+              Это не программа: ни вызовов, ни доступа к системе здесь
+              нет и быть не может — выражения приходят из веба, где автор
+              известен, а не из эфира.
+            </p>
+            <form method="post"
+                  action="{{ url_for('lorachat.device_widget', slug=net.slug, node=d.node_id) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input name="title" placeholder="Заголовок виджета"
+                     value="{{ d.widget.get('title', '') }}" maxlength="40">
+              {% for i in range(4) %}
+                {% set row = (d.widget.get('derived') or [])[i]
+                              if (d.widget.get('derived') or [])|length > i else none %}
+                <div class="lc-row">
+                  <input name="d_label" placeholder="подпись" maxlength="40"
+                         value="{{ row.label if row else '' }}">
+                  <input name="d_expr" placeholder="выражение" maxlength="500"
+                         value="{{ row.expr if row else '' }}">
+                  <input name="d_unit" placeholder="ед." maxlength="12"
+                         style="max-width:80px"
+                         value="{{ row.unit if row else '' }}">
+                </div>
+              {% endfor %}
+              <button type="submit">Сохранить виджет</button>
+            </form>
+          </details>
+
+          <form method="post" class="lc-inline"
+                action="{{ url_for('lorachat.device_forget', slug=net.slug, node=d.node_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="lc-danger">Забыть устройство</button>
+          </form>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="lc-dim">Устройств пока нет. Включите датчик — он объявится сам.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Кнопки</h2>
+    <p class="lc-hint">
+      Свои алерты и команды одним нажатием: «сбор», «тревога», «включить
+      свет в гараже». Кнопка не содержит кода — только тип действия и
+      параметры, которые проверяет сервер.
+    </p>
+    {% if buttons %}
+      <table class="lc-table">
+        <tbody>
+        {% for b in buttons %}
+          <tr>
+            <td>{{ b.icon }} <b>{{ b.label }}</b></td>
+            <td><span class="lc-badge">{{ b.kind }}</span>
+                {% if b.host_only %}<span class="lc-badge">только хост</span>{% endif %}</td>
+            <td class="lc-dim">
+              {% if b.kind == 'devcmd' %}{{ b.node_id }} → #{{ b.cmd_id }} ({{ b.cmd_arg }})
+              {% else %}{{ b.text[:60] }}{% endif %}
+            </td>
+            <td class="lc-actions">
+              <form method="post"
+                    action="{{ url_for('lorachat.button_delete', slug=net.slug, bid=b.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button>удалить</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('lorachat.button_add', slug=net.slug) }}"
+          class="lc-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input name="icon" placeholder="🔔" maxlength="8" style="max-width:70px">
+      <input name="label" placeholder="Надпись" maxlength="40" required>
+      <select name="kind">
+        <option value="message">сообщение</option>
+        <option value="sos">SOS</option>
+        <option value="devcmd">команда устройству</option>
+      </select>
+      <input name="text" placeholder="текст сообщения" maxlength="200">
+      <input name="node_id" placeholder="узел (для команды)" maxlength="16">
+      <input name="cmd_id" type="number" placeholder="#" style="max-width:70px">
+      <input name="cmd_arg" type="number" placeholder="арг" style="max-width:80px">
+      <label class="lc-check"><input type="checkbox" name="host_only"> только хост</label>
+      <label class="lc-check"><input type="checkbox" name="confirm"> спрашивать</label>
+      <button type="submit">Добавить</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Хранение</h2>
+    <p class="lc-hint">
+      Текст хранится всегда — он почти ничего не весит. Место занимают
+      фото, голос и файлы, поэтому у них есть срок жизни: после него они
+      удаляются с диска, а сообщение остаётся в истории без вложения.
+      Занято <b>{{ used_mb }}</b> из <b>{{ quota_mb }}</b> МБ.
+    </p>
+    <form method="post" action="{{ url_for('lorachat.net_settings', slug=net.slug) }}" class="lc-row">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>Квота, МБ <input name="quota_mb" type="number" min="16" value="{{ quota_mb }}"></label>
+      <label>Срок медиа, дней <input name="ttl_days" type="number" min="1" value="{{ net.media_ttl_days }}"></label>
+      <label class="lc-check">
+        <input type="checkbox" name="sos_broadcast" {{ 'checked' if net.sos_broadcast }}>
+        SOS дублировать всем и по эфиру
+      </label>
+      <button type="submit">Сохранить</button>
+    </form>
+  </section>
+</div>
+
+<style>
+.lc-wrap { max-width: 960px; margin: 0 auto; padding: 20px; }
+.lc-back { color: #98a2b3; font-size: .85rem; text-decoration: none; }
+.lc-lead, .lc-hint { color: #98a2b3; font-size: .87rem; line-height: 1.55; max-width: 70ch; }
+.lc-creds { border: 1px solid #2b5c3b; background: #12251a; border-radius: 12px;
+  padding: 14px 18px; margin: 18px 0; }
+.lc-creds.lc-bad { border-color: #5c2b2b; background: #251212; }
+.lc-creds h3 { margin: 0 0 4px; font-size: 1rem; }
+.lc-creds dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 10px 0 0; }
+.lc-creds dt { color: #98a2b3; font-size: .82rem; }
+.lc-creds code { background: #0f1216; padding: 2px 8px; border-radius: 6px; }
+section { margin-top: 30px; }
+section h2 { font-size: 1.1rem; }
+.lc-table { width: 100%; border-collapse: collapse; font-size: .87rem; margin-top: 10px; }
+.lc-table th { text-align: left; font-weight: 500; color: #98a2b3; font-size: .78rem;
+  border-bottom: 1px solid #232a34; padding: 6px 8px 6px 0; }
+.lc-table td { padding: 8px 8px 8px 0; border-bottom: 1px solid #1b212a; vertical-align: middle; }
+.lc-table tr.lc-off { opacity: .45; }
+.lc-link { font-size: .74rem; word-break: break-all; color: #4da3ff; }
+.lc-badge { font-size: .68rem; border: 1px solid #2a323d; border-radius: 999px;
+  padding: 1px 7px; color: #98a2b3; margin-left: 4px; }
+.lc-badge.on { color: #4ade80; border-color: #2b5c3b; }
+.lc-dim { color: #667085; font-size: .8rem; }
+.lc-actions { display: flex; gap: 6px; }
+.lc-actions button { background: #1d242e; border: 1px solid #2a323d; color: #98a2b3;
+  border-radius: 8px; padding: 4px 10px; font: inherit; font-size: .78rem; cursor: pointer; }
+.lc-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+.lc-row input[type=text], .lc-row input:not([type]), .lc-row input[type=number] {
+  padding: 8px 12px; border-radius: 9px; border: 1px solid #2a323d;
+  background: #141922; color: inherit; font: inherit; }
+.lc-row label { font-size: .82rem; color: #98a2b3; display: flex; gap: 6px; align-items: center; }
+.lc-row .lc-check { gap: 6px; }
+.lc-dev { border: 1px solid var(--line, #232a34); border-radius: 12px;
+  padding: 12px 16px; margin: 12px 0; background: #171c23; }
+.lc-dev header { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.lc-vals { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0; font-size: .88rem; }
+.lc-vals i { color: #98a2b3; font-style: normal; font-size: .78rem; margin-right: 4px; }
+.lc-badge.warn { color: #f0a83c; border-color: #4a3a1c; }
+.lc-inline { display: inline-block; margin-top: 8px; }
+.lc-danger { background: #2a1212 !important; border-color: #5c2b2b !important;
+  color: #f87171 !important; }
+.lc-row select { padding: 8px 12px; border-radius: 9px; border: 1px solid #2a323d;
+  background: #141922; color: inherit; font: inherit; }
+.lc-row button { padding: 8px 18px; border-radius: 9px; border: 0; background: #4da3ff;
+  color: #0f1216; font: inherit; font-weight: 600; cursor: pointer; }
+</style>
+{% endblock %}

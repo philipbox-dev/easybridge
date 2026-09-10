@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyBridge Flasher</title>
+<script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f1216; --card: #171c23; --line: #232a34;
+    --fg: #e6e9ee; --dim: #98a2b3; --accent: #4da3ff;
+    --warn: #f0a83c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg);
+    max-width: 860px; margin: 40px auto; padding: 0 20px; line-height: 1.5;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: .3rem; } h1 span { color: var(--accent); }
+  .lead { color: var(--dim); font-size: .9rem; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0 6px; }
+  .filters button {
+    background: var(--card); color: var(--dim); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: .82rem;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin: 14px 0; }
+  .card > header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card h2 { font-size: 1.05rem; margin: 0; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 0; }
+  .tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--dim); }
+  .tag.on { color: var(--accent); border-color: #24455f; }
+  .tag.warn { color: var(--warn); border-color: #4a3a1c; }
+  .desc { font-size: .85rem; color: var(--dim); margin: 10px 0 0; }
+
+  .actions { margin-top: 14px; }
+  esp-web-install-button::part(button) {
+    background: var(--accent); color: var(--bg); border-radius: 8px;
+    font-weight: 600; padding: 8px 18px; font-size: .9rem;
+  }
+
+  details { margin-top: 14px; }
+  summary { cursor: pointer; font-size: .85rem; color: var(--accent); }
+  .pins { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 12px; }
+  .pins h3 { font-size: .8rem; margin: 0 0 6px; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; }
+  table { border-collapse: collapse; width: 100%; font-size: .84rem; }
+  td { padding: 3px 0; border-bottom: 1px solid var(--line); }
+  td:last-child { text-align: right; font-variant-numeric: tabular-nums; color: var(--accent); white-space: nowrap; }
+  .power { font-size: .78rem; color: var(--dim); margin-top: 6px; }
+
+  .note { font-size: .82rem; color: var(--dim); margin-top: 28px; }
+  code { background: var(--line); padding: 1px 6px; border-radius: 5px; }
+  .err { color: var(--warn); }
+</style>
+</head>
+<body>
+<h1>⚡ <span>EasyBridge</span> Flasher</h1>
+<p class="lead">Подключите плату по USB и нажмите кнопку. Работает в Chrome / Edge
+(WebSerial), страница должна быть открыта по <code>http://localhost</code> или HTTPS.</p>
+
+<div class="filters" id="filters"></div>
+<div id="list"><p class="lead">Загружаю профили…</p></div>
+
+<p class="note">
+Профили и таблицы пинов сгенерированы из <code>main/hwcfg.c</code> скриптом
+<code>tools/gen_profiles.py</code> — это тот же список, который знает прошивка.<br>
+Прошивка одна на чип: какое именно радио и дисплей припаяны, задаётся
+<b>после</b> прошивки из приложения EasyLink (Настройки → Железо → профиль).
+Там же задаётся имя пользователя.<br>
+Локальный запуск: <code>python -m http.server -d tools/flasher/web 8000</code>
+</p>
+
+<script>
+const MANIFEST = {           // у каких профилей есть готовый образ
+  s3_e220: "manifest_s3_e220.json",
+  c6_e220: "manifest_c6_e220.json",
+  t3_v161: "manifest_t3_v161.json",
+  s3_e22m33s: "manifest_s3_e22m33s.json",
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const mhz = hz => (hz / 1e6).toFixed(3).replace(/\.?0+$/, "") + " МГц";
+
+function pinTable(title, pins) {
+  if (!pins || !pins.length) return "";
+  const rows = pins.map(p =>
+    `<tr><td>${esc(p.label)}</td><td>GPIO ${p.gpio}</td></tr>`).join("");
+  return `<div><h3>${esc(title)}</h3><table>${rows}</table></div>`;
+}
+
+function card(p) {
+  const r = p.radio || {};
+  const tags = [`<span class="tag">${esc(p.family)}</span>`];
+  if (r.chip) tags.push(`<span class="tag on">${esc(r.chip)} · ${esc(r.band)}</span>`);
+  if (p.radio2) tags.push(`<span class="tag warn">+ ${esc(p.radio2.chip)}</span>`);
+  if (p.display) tags.push(`<span class="tag">${esc(p.display.kind)} ${esc(p.display.size)}</span>`);
+  if (p.touch) tags.push(`<span class="tag on">тач ${esc(p.touch.kind)}</span>`);
+  if (p.battery) tags.push(`<span class="tag">батарея</span>`);
+  tags.push(r.fsk
+    ? `<span class="tag on">FSK: звонки по эфиру</span>`
+    : `<span class="tag warn">без FSK: звонки только через веб</span>`);
+
+  // Готовый образ есть не у каждого профиля: самосборы прошиваются
+  // образом для того же чипа, а своё железо выбирают уже в приложении.
+  let actions, desc;
+  if (p.prebuilt && MANIFEST[p.id]) {
+    actions = `<esp-web-install-button manifest="${MANIFEST[p.id]}"></esp-web-install-button>`;
+    desc = "";
+  } else {
+    const base = Object.keys(MANIFEST).find(k =>
+      PROFILES.find(x => x.id === k && x.target === p.target));
+    actions = base
+      ? `<esp-web-install-button manifest="${MANIFEST[base]}"></esp-web-install-button>`
+      : `<span class="err">нет образа под ${esc(p.target)} — соберите build_images.sh</span>`;
+    desc = `<p class="desc">Отдельного образа нет: прошейте любой образ для
+      ${esc(p.family)}, затем в приложении выберите профиль
+      <code>${esc(p.id)}</code> и перезагрузите плату.</p>`;
+  }
+
+  const power = r.max_dbm
+    ? `<p class="power">Частота ${mhz(r.freq_hz)} · потолок ${r.max_dbm} dBm · шина ${esc(r.bus)}</p>`
+    : "";
+
+  const pins = [
+    pinTable("Радио — " + (r.chip || "?"), r.pins),
+    p.radio2 ? pinTable("Радио 2 — " + p.radio2.chip, p.radio2.pins) : "",
+    p.display ? pinTable("Дисплей — " + p.display.kind, p.display.pins) : "",
+    p.touch ? pinTable("Тач — " + p.touch.kind, p.touch.pins) : "",
+    p.led >= 0 ? pinTable("Прочее", [{ label: "LED", gpio: p.led }]) : "",
+  ].join("");
+
+  return `<div class="card" data-target="${esc(p.target)}">
+    <header><h2>${esc(p.name)}</h2><code>${esc(p.id)}</code></header>
+    <div class="tags">${tags.join("")}</div>
+    ${power}${desc}
+    <div class="actions">${actions}</div>
+    <details><summary>Схема подключения</summary><div class="pins">${pins}</div></details>
+  </div>`;
+}
+
+let PROFILES = [];
+let filter = "all";
+
+function render() {
+  const list = document.getElementById("list");
+  const shown = PROFILES.filter(p => filter === "all" || p.target === filter);
+  list.innerHTML = shown.map(card).join("") ||
+    `<p class="lead">Под этот фильтр профилей нет.</p>`;
+}
+
+function renderFilters() {
+  const targets = [...new Set(PROFILES.map(p => p.target))];
+  const mk = (id, label) =>
+    `<button data-f="${id}" aria-pressed="${filter === id}">${esc(label)}</button>`;
+  const el = document.getElementById("filters");
+  el.innerHTML = mk("all", "Все платы") +
+    targets.map(t => mk(t, PROFILES.find(p => p.target === t).family)).join("");
+  el.onclick = e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    filter = b.dataset.f;
+    renderFilters();
+    render();
+  };
+}
+
+fetch("profiles.json")
+  .then(r => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  })
+  .then(d => {
+    PROFILES = d.profiles;
+    renderFilters();
+    render();
+  })
+  .catch(e => {
+    // Чаще всего это открытая через file:// страница: fetch туда не ходит.
+    document.getElementById("list").innerHTML =
+      `<p class="err">Не удалось загрузить profiles.json (${esc(e.message)}).
+       Запустите страницу через <code>python -m http.server</code>, а не открывайте файлом.</p>`;
+  });
+</script>
+</body>
+</html>

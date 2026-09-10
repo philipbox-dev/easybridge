@@ -1,0 +1,46 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "hwcfg.c"
+        "jsonlite.c"
+        "devnode.c"
+        "spi_bus.c"
+        "identity.c"
+        "battery.c"
+        "ptt.c"
+        "imgfsk.c"
+        "led.c"
+        # Радио: собираются ВСЕ, нужный выбирается в рантайме по hwcfg
+        "radio_registry.c"
+        "radio_stub.c"
+        "e220.c"
+        "sx1278.c"
+        "sx126x.c"
+        "radio_e220.c"
+        "radio_sx127x.c"
+        "radio_sx126x.c"
+        "lora_manager.c"
+        "protocol.c"
+        "peer_manager.c"
+        "ble_server.c"
+        "bridge.c"
+        # Дисплеи и тач — так же в рантайме
+        "panel.c"
+        "panel_mono.c"
+        "panel_lcd.c"
+        "touch.c"
+        "display.c"
+        "proto25.c"
+        "nodedb.c"
+        "blacklist.c"
+    INCLUDE_DIRS "."
+    REQUIRES
+        driver
+        esp_adc
+        nvs_flash
+        bt
+        esp_timer
+        esp_hw_support
+        spi_flash
+        mbedtls
+)

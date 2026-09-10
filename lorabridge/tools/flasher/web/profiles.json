@@ -1,0 +1,816 @@
+{
+ "generated_by": "tools/gen_profiles.py — не править руками, источник: main/hwcfg.c",
+ "profiles": [
+  {
+   "id": "s3_e220",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": true,
+   "name": "S3+E220",
+   "hw_id": 1,
+   "radio": {
+    "chip": "E220",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 30,
+    "bus": "UART",
+    "fsk": false,
+    "pins": [
+     {
+      "label": "RXD модуля ← ESP TX",
+      "gpio": 17
+     },
+     {
+      "label": "TXD модуля → ESP RX",
+      "gpio": 18
+     },
+     {
+      "label": "AUX",
+      "gpio": 38
+     },
+     {
+      "label": "M0",
+      "gpio": 39
+     },
+     {
+      "label": "M1",
+      "gpio": 40
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 47
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "c6_e220",
+   "target": "esp32c6",
+   "family": "ESP32-C6",
+   "prebuilt": true,
+   "name": "C6+E220",
+   "hw_id": 2,
+   "radio": {
+    "chip": "E220",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 30,
+    "bus": "UART",
+    "fsk": false,
+    "pins": [
+     {
+      "label": "RXD модуля ← ESP TX",
+      "gpio": 4
+     },
+     {
+      "label": "TXD модуля → ESP RX",
+      "gpio": 5
+     },
+     {
+      "label": "AUX",
+      "gpio": 6
+     },
+     {
+      "label": "M0",
+      "gpio": 18
+     },
+     {
+      "label": "M1",
+      "gpio": 19
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 22
+     },
+     {
+      "label": "SCL",
+      "gpio": 23
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "t3_v161",
+   "target": "esp32",
+   "family": "ESP32",
+   "prebuilt": true,
+   "name": "T3-v1.6.1",
+   "hw_id": 3,
+   "radio": {
+    "chip": "SX127x",
+    "band": "868 МГц",
+    "freq_hz": 869525000,
+    "max_dbm": 20,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 5
+     },
+     {
+      "label": "MISO",
+      "gpio": 19
+     },
+     {
+      "label": "MOSI",
+      "gpio": 27
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 18
+     },
+     {
+      "label": "RST",
+      "gpio": 23
+     },
+     {
+      "label": "DIO0",
+      "gpio": 26
+     },
+     {
+      "label": "DIO1",
+      "gpio": 33
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 22
+     }
+    ]
+   },
+   "touch": null,
+   "battery": true,
+   "led": 25
+  },
+  {
+   "id": "t3_v161_915",
+   "target": "esp32",
+   "family": "ESP32",
+   "prebuilt": false,
+   "name": "T3-v1.6.1 915",
+   "hw_id": 3,
+   "radio": {
+    "chip": "SX127x",
+    "band": "915 МГц",
+    "freq_hz": 906875000,
+    "max_dbm": 20,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 5
+     },
+     {
+      "label": "MISO",
+      "gpio": 19
+     },
+     {
+      "label": "MOSI",
+      "gpio": 27
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 18
+     },
+     {
+      "label": "RST",
+      "gpio": 23
+     },
+     {
+      "label": "DIO0",
+      "gpio": 26
+     },
+     {
+      "label": "DIO1",
+      "gpio": 33
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 22
+     }
+    ]
+   },
+   "touch": null,
+   "battery": true,
+   "led": 25
+  },
+  {
+   "id": "s3_e22m33s",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": true,
+   "name": "S3+E22-M33S",
+   "hw_id": 4,
+   "radio": {
+    "chip": "SX126x",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 33,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 10
+     },
+     {
+      "label": "RST",
+      "gpio": 9
+     },
+     {
+      "label": "BUSY",
+      "gpio": 14
+     },
+     {
+      "label": "DIO1",
+      "gpio": 8
+     },
+     {
+      "label": "TXEN",
+      "gpio": 7
+     },
+     {
+      "label": "RXEN",
+      "gpio": 6
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 47
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "c6_ra02",
+   "target": "esp32c6",
+   "family": "ESP32-C6",
+   "prebuilt": false,
+   "name": "C6+Ra-02",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX127x",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 20,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 6
+     },
+     {
+      "label": "MISO",
+      "gpio": 2
+     },
+     {
+      "label": "MOSI",
+      "gpio": 7
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 18
+     },
+     {
+      "label": "RST",
+      "gpio": 19
+     },
+     {
+      "label": "DIO0",
+      "gpio": 20
+     },
+     {
+      "label": "DIO1",
+      "gpio": 21
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 22
+     },
+     {
+      "label": "SCL",
+      "gpio": 23
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "s3_ra02",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": false,
+   "name": "S3+Ra-02",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX127x",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 20,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 36
+     },
+     {
+      "label": "MISO",
+      "gpio": 37
+     },
+     {
+      "label": "MOSI",
+      "gpio": 35
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 38
+     },
+     {
+      "label": "RST",
+      "gpio": 39
+     },
+     {
+      "label": "DIO0",
+      "gpio": 40
+     },
+     {
+      "label": "DIO1",
+      "gpio": 41
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 47
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "s3_sx1262_st7789",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": false,
+   "name": "S3+SX1262+IPS",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX126x",
+    "band": "868 МГц",
+    "freq_hz": 869525000,
+    "max_dbm": 22,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 10
+     },
+     {
+      "label": "RST",
+      "gpio": 9
+     },
+     {
+      "label": "BUSY",
+      "gpio": 14
+     },
+     {
+      "label": "DIO1",
+      "gpio": 8
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "ST7789_SPI",
+    "size": "240x240",
+    "bus": "SPI",
+    "i2c_addr": 0,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 39
+     },
+     {
+      "label": "MOSI",
+      "gpio": 40
+     },
+     {
+      "label": "CS",
+      "gpio": 41
+     },
+     {
+      "label": "DC",
+      "gpio": 42
+     },
+     {
+      "label": "RST",
+      "gpio": 45
+     },
+     {
+      "label": "BL",
+      "gpio": 46
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "s3_ili9341_touch",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": false,
+   "name": "S3+ILI9341 touch",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX127x",
+    "band": "433 МГц",
+    "freq_hz": 433125000,
+    "max_dbm": 20,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 36
+     },
+     {
+      "label": "MISO",
+      "gpio": 37
+     },
+     {
+      "label": "MOSI",
+      "gpio": 35
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 38
+     },
+     {
+      "label": "RST",
+      "gpio": 39
+     },
+     {
+      "label": "DIO0",
+      "gpio": 40
+     },
+     {
+      "label": "DIO1",
+      "gpio": 41
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "ILI9341_SPI",
+    "size": "320x240",
+    "bus": "SPI",
+    "i2c_addr": 0,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "CS",
+      "gpio": 10
+     },
+     {
+      "label": "DC",
+      "gpio": 9
+     },
+     {
+      "label": "RST",
+      "gpio": 8
+     },
+     {
+      "label": "BL",
+      "gpio": 7
+     }
+    ]
+   },
+   "touch": {
+    "kind": "XPT2046_SPI",
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "CS",
+      "gpio": 6
+     },
+     {
+      "label": "IRQ",
+      "gpio": 5
+     }
+    ]
+   },
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "s3_e28_2g4",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": false,
+   "name": "S3+E28 2.4G",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX128x",
+    "band": "2.4 ГГц",
+    "freq_hz": 2450000000,
+    "max_dbm": 12,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 10
+     },
+     {
+      "label": "RST",
+      "gpio": 9
+     },
+     {
+      "label": "BUSY",
+      "gpio": 14
+     },
+     {
+      "label": "DIO1",
+      "gpio": 8
+     }
+    ]
+   },
+   "radio2": null,
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 47
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  },
+  {
+   "id": "s3_lora_halow",
+   "target": "esp32s3",
+   "family": "ESP32-S3",
+   "prebuilt": false,
+   "name": "S3+LoRa+HaLow",
+   "hw_id": 5,
+   "radio": {
+    "chip": "SX126x",
+    "band": "868 МГц",
+    "freq_hz": 869525000,
+    "max_dbm": 22,
+    "bus": "SPI",
+    "fsk": true,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 12
+     },
+     {
+      "label": "MISO",
+      "gpio": 13
+     },
+     {
+      "label": "MOSI",
+      "gpio": 11
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 10
+     },
+     {
+      "label": "RST",
+      "gpio": 9
+     },
+     {
+      "label": "BUSY",
+      "gpio": 14
+     },
+     {
+      "label": "DIO1",
+      "gpio": 8
+     }
+    ]
+   },
+   "radio2": {
+    "chip": "HaLow",
+    "band": "HaLow sub-1G",
+    "freq_hz": 868000000,
+    "max_dbm": 21,
+    "bus": "SPI",
+    "fsk": false,
+    "pins": [
+     {
+      "label": "SCK",
+      "gpio": 39
+     },
+     {
+      "label": "MISO",
+      "gpio": 38
+     },
+     {
+      "label": "MOSI",
+      "gpio": 40
+     },
+     {
+      "label": "NSS (CS)",
+      "gpio": 41
+     },
+     {
+      "label": "RST",
+      "gpio": 42
+     },
+     {
+      "label": "DIO0",
+      "gpio": 45
+     }
+    ]
+   },
+   "display": {
+    "kind": "SSD1306_I2C",
+    "size": "128x64",
+    "bus": "I2C",
+    "i2c_addr": 60,
+    "pins": [
+     {
+      "label": "SDA",
+      "gpio": 21
+     },
+     {
+      "label": "SCL",
+      "gpio": 47
+     }
+    ]
+   },
+   "touch": null,
+   "battery": false,
+   "led": -1
+  }
+ ]
+}

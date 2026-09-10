@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/CMakeFiles/bootloader
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/CMakeFiles/bootloader.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/CMakeFiles/bootloader-complete.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

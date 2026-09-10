@@ -1,0 +1,2 @@
+source /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/bootloader/gdbinit/symbols
+source /home/philipbox/easybridge-v2.9/lorabridge/build_t3_v161/bootloader/gdbinit/connect

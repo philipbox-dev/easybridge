@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>EasyBridge Font Editor</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif; background:#0f1216; color:#e6e9ee;
+    margin:0; display:flex; height:100vh; overflow:hidden;
+  }
+  #sidebar {
+    width:300px; overflow-y:auto; background:#12161c;
+    border-right:1px solid #232a34; padding:10px;
+  }
+  #main { flex:1; padding:18px; overflow-y:auto; }
+  h1 { font-size:1.1rem; margin:0 0 10px; } h1 span{color:#4da3ff;}
+  button, label.btn {
+    background:#232a34; color:#e6e9ee; border:1px solid #2f3946;
+    border-radius:7px; padding:6px 12px; cursor:pointer; font-size:.85rem;
+    display:inline-block; margin:2px;
+  }
+  button:hover, label.btn:hover { background:#2d3644; }
+  button.primary { background:#4da3ff; color:#0f1216; font-weight:600; border:0; }
+  #glyphlist { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:10px; }
+  .gcell {
+    background:#1a212b; border:1px solid #232a34; border-radius:6px;
+    padding:4px; text-align:center; cursor:pointer; font-size:.7rem; color:#98a2b3;
+  }
+  .gcell.sel { border-color:#4da3ff; background:#1d2735; }
+  .gcell canvas { image-rendering: pixelated; display:block; margin:0 auto 2px; }
+  #grid { image-rendering: pixelated; border:1px solid #2f3946; cursor:crosshair;
+          touch-action:none; }
+  #preview-row { display:flex; gap:14px; align-items:flex-end; margin-top:12px; }
+  .plabel { font-size:.7rem; color:#98a2b3; text-align:center; margin-top:3px; }
+  #status { color:#98a2b3; font-size:.8rem; margin-top:10px; }
+  #toolbar { margin:10px 0; }
+  input[type=file]{ display:none; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <h1>⚡ <span>EasyBridge</span> Font Editor</h1>
+  <label class="btn primary">Открыть .h<input type="file" id="file" accept=".h"></label>
+  <button class="primary" id="save">💾 Скачать .h</button>
+  <div id="fontinfo" style="font-size:.75rem;color:#98a2b3;margin-top:6px">
+    Откройте main/font8x16_cyr.h или font8x16.h
+  </div>
+  <div id="glyphlist"></div>
+</div>
+<div id="main">
+  <div id="editor" style="display:none">
+    <h2 id="gname" style="font-size:1rem;color:#4da3ff"></h2>
+    <canvas id="grid" width="320" height="640"></canvas>
+    <div id="toolbar">
+      <button id="prev">← Пред</button>
+      <button id="next">След →</button>
+      <button id="clear">Очистить</button>
+      <button id="invert">Инверт</button>
+      <button id="sl">⇐</button><button id="sr">⇒</button>
+      <button id="su">⇑</button><button id="sd">⇓</button>
+      <button id="copy">Копир.</button>
+      <button id="paste">Вставить</button>
+      <button id="undo">↶ Отмена</button>
+    </div>
+    <div id="preview-row">
+      <div><canvas id="p1" width="8" height="16" style="width:8px;height:16px"></canvas><div class="plabel">1×</div></div>
+      <div><canvas id="p2" width="8" height="16" style="width:16px;height:32px"></canvas><div class="plabel">2×</div></div>
+      <div><canvas id="p4" width="8" height="16" style="width:32px;height:64px"></canvas><div class="plabel">4×</div></div>
+      <div><canvas id="pw" width="64" height="16" style="width:128px;height:32px"></canvas><div class="plabel">в слове</div></div>
+    </div>
+    <div id="status">
+      ЛКМ — рисовать · ПКМ (или ЛКМ по включённому) — стирать · тащите для линий.<br>
+      Формат: 16 байт на глиф — байты 0-7 верхняя половина (бит N = строка N),
+      байты 8-15 нижняя (бит N = строка 8+N). Ровно как ест draw_glyph() в display.c.
+    </div>
+  </div>
+</div>
+<script>
+"use strict";
+const CELL = 40, W = 8, H = 16;
+let fontName = "", fullText = "", arrays = [], glyphs = [], labels = [], owner = [], cur = -1;
+// arrays: [{name, start, end}] — позиции тел массивов в fullText
+// owner[i] — индекс массива, которому принадлежит глиф i
+let clipboard = null, undoBuf = null, paintMode = null;
+
+// ── Парсер .h ────────────────────────────────────────────────
+function parseH(text) {
+  fullText = text;
+  arrays = []; glyphs = []; labels = []; owner = [];
+  // ВСЕ массивы NAME[][16] в файле (в font8x16_cyr.h их два:
+  // буквы + font8x16_special — теряться не должен ни один!)
+  const decl = /static\s+const\s+uint8_t\s+(\w+)\s*\[\]\s*\[16\]\s*=\s*\{/g;
+  let m;
+  while ((m = decl.exec(text)) !== null) {
+    const bodyStart = m.index + m[0].length;
+    const bodyEnd = text.indexOf("};", bodyStart);
+    if (bodyEnd < 0) continue;
+    const ai = arrays.length;
+    arrays.push({ name: m[1], start: bodyStart, end: bodyEnd });
+    const body = text.slice(bodyStart, bodyEnd);
+    const re = /(?:\/\/\s*([^\n]*)\n\s*)?\{([^}]*)\}/g;
+    let g, n = 0;
+    while ((g = re.exec(body)) !== null) {
+      const bytes = g[2].split(",").map(s => parseInt(s.trim(), 16)).filter(x => !isNaN(x));
+      if (bytes.length !== 16) continue;
+      glyphs.push(bytes);
+      labels.push((g[1] || `${m[1]}#${n}`).trim());
+      owner.push(ai);
+      n++;
+    }
+  }
+  fontName = arrays.length ? arrays[0].name : "";
+  return glyphs.length > 0;
+}
+
+function exportH() {
+  // Пересобираем ТОЛЬКО тела массивов, остальной файл — байт-в-байт
+  let out = "", pos = 0;
+  arrays.forEach((arr, ai) => {
+    out += fullText.slice(pos, arr.start) + "\n";
+    glyphs.forEach((gl, i) => {
+      if (owner[i] !== ai) return;
+      out += `    // ${labels[i]}\n    {`;
+      out += gl.map(b => "0x" + b.toString(16).toUpperCase().padStart(2, "0")).join(",");
+      out += `},\n`;
+    });
+    pos = arr.end;
+  });
+  out += fullText.slice(pos);
+  return out;
+}
+
+// ── Пиксели ↔ байты ──────────────────────────────────────────
+const getPx = (gl, x, y) =>
+  y < 8 ? (gl[x] >> y) & 1 : (gl[8 + x] >> (y - 8)) & 1;
+function setPx(gl, x, y, v) {
+  const i = y < 8 ? x : 8 + x, b = y < 8 ? y : y - 8;
+  if (v) gl[i] |= (1 << b); else gl[i] &= ~(1 << b);
+}
+
+// ── Рендер ───────────────────────────────────────────────────
+function drawGlyphOn(ctx, gl, ox = 0) {
+  for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) {
+    ctx.fillStyle = getPx(gl, x, y) ? "#e6e9ee" : "#0f1216";
+    ctx.fillRect(ox + x, y, 1, 1);
+  }
+}
+
+function renderGrid() {
+  const cv = document.getElementById("grid"), ctx = cv.getContext("2d");
+  const gl = glyphs[cur];
+  for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) {
+    ctx.fillStyle = getPx(gl, x, y) ? "#4da3ff" : (y < 8 ? "#151a21" : "#12161c");
+    ctx.fillRect(x * CELL, y * CELL, CELL - 1, CELL - 1);
+  }
+  // разделитель половин (граница страниц SSD1306)
+  ctx.fillStyle = "#2f3946";
+  ctx.fillRect(0, 8 * CELL - 1, W * CELL, 2);
+
+  ["p1","p2","p4"].forEach(id =>
+    drawGlyphOn(document.getElementById(id).getContext("2d"), gl));
+  // «в слове»: глиф в окружении соседей
+  const pw = document.getElementById("pw").getContext("2d");
+  pw.fillStyle = "#0f1216"; pw.fillRect(0, 0, 64, 16);
+  for (let k = -3; k <= 4; k++) {
+    const gi = cur + k;
+    if (gi >= 0 && gi < glyphs.length) drawGlyphOn(pw, glyphs[gi], (k + 3) * 8);
+  }
+  document.getElementById("gname").textContent =
+    `${labels[cur]}  —  глиф ${cur + 1}/${glyphs.length}`;
+  renderListCell(cur);
+}
+
+function renderListCell(i) {
+  const c = document.querySelector(`#glyphlist [data-i="${i}"] canvas`);
+  if (c) drawGlyphOn(c.getContext("2d"), glyphs[i]);
+}
+
+function renderList() {
+  const list = document.getElementById("glyphlist");
+  list.innerHTML = "";
+  glyphs.forEach((gl, i) => {
+    const d = document.createElement("div");
+    d.className = "gcell" + (i === cur ? " sel" : "");
+    d.dataset.i = i;
+    const c = document.createElement("canvas");
+    c.width = 8; c.height = 16;
+    c.style.width = "16px"; c.style.height = "32px";
+    d.appendChild(c);
+    const l = document.createElement("div");
+    l.textContent = labels[i].slice(0, 8);
+    if (owner[i] > 0) l.style.color = "#e8a33d";  // спец-массив — оранжевым
+    d.appendChild(l);
+    d.onclick = () => select(i);
+    list.appendChild(d);
+    drawGlyphOn(c.getContext("2d"), gl);
+  });
+}
+
+function select(i) {
+  cur = Math.max(0, Math.min(glyphs.length - 1, i));
+  document.querySelectorAll(".gcell").forEach(el =>
+    el.classList.toggle("sel", +el.dataset.i === cur));
+  document.getElementById("editor").style.display = "block";
+  const el = document.querySelector(`#glyphlist [data-i="${cur}"]`);
+  if (el) el.scrollIntoView({ block: "nearest" });
+  renderGrid();
+}
+
+// ── Редактирование ───────────────────────────────────────────
+function snap() { undoBuf = { i: cur, g: [...glyphs[cur]] }; }
+function cellFromEvent(e) {
+  const r = e.target.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left) / (r.width / W));
+  const y = Math.floor((e.clientY - r.top) / (r.height / H));
+  return (x >= 0 && x < W && y >= 0 && y < H) ? { x, y } : null;
+}
+
+const grid = document.getElementById("grid");
+grid.oncontextmenu = e => e.preventDefault();
+grid.onpointerdown = e => {
+  if (cur < 0) return;
+  const c = cellFromEvent(e); if (!c) return;
+  snap();
+  paintMode = e.button === 2 ? 0 : (getPx(glyphs[cur], c.x, c.y) ? 0 : 1);
+  setPx(glyphs[cur], c.x, c.y, paintMode);
+  grid.setPointerCapture(e.pointerId);
+  renderGrid();
+};
+grid.onpointermove = e => {
+  if (paintMode === null || cur < 0) return;
+  const c = cellFromEvent(e); if (!c) return;
+  setPx(glyphs[cur], c.x, c.y, paintMode);
+  renderGrid();
+};
+grid.onpointerup = () => { paintMode = null; };
+
+// ── Тулбар ───────────────────────────────────────────────────
+const tools = {
+  prev:  () => select(cur - 1),
+  next:  () => select(cur + 1),
+  clear: () => { snap(); glyphs[cur].fill(0); renderGrid(); },
+  invert:() => { snap();
+    for (let x=0;x<W;x++) for (let y=0;y<H;y++)
+      setPx(glyphs[cur],x,y,1-getPx(glyphs[cur],x,y));
+    renderGrid(); },
+  sl: () => shift(-1,0), sr: () => shift(1,0),
+  su: () => shift(0,-1), sd: () => shift(0,1),
+  copy:  () => { clipboard = [...glyphs[cur]]; },
+  paste: () => { if (clipboard) { snap(); glyphs[cur] = [...clipboard]; renderGrid(); } },
+  undo:  () => { if (undoBuf) { glyphs[undoBuf.i] = undoBuf.g; renderGrid(); undoBuf = null; } },
+};
+function shift(dx, dy) {
+  snap();
+  const src = glyphs[cur], dst = new Array(16).fill(0);
+  for (let x=0;x<W;x++) for (let y=0;y<H;y++) {
+    const nx=x+dx, ny=y+dy;
+    if (nx>=0&&nx<W&&ny>=0&&ny<H && getPx(src,x,y))
+      setPx(dst,nx,ny,1);
+  }
+  glyphs[cur] = dst;
+  renderGrid();
+}
+Object.keys(tools).forEach(id =>
+  document.getElementById(id).onclick = tools[id]);
+
+document.addEventListener("keydown", e => {
+  if (cur < 0) return;
+  if (e.key === "ArrowLeft" && e.ctrlKey)  { tools.prev(); e.preventDefault(); }
+  if (e.key === "ArrowRight" && e.ctrlKey) { tools.next(); e.preventDefault(); }
+  if (e.key === "z" && e.ctrlKey)          { tools.undo(); e.preventDefault(); }
+});
+
+// ── Файлы ────────────────────────────────────────────────────
+document.getElementById("file").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  const text = await f.text();
+  if (!parseH(text)) return;
+  document.getElementById("fontinfo").textContent =
+    `${f.name} · массивов: ${arrays.map(a=>a.name).join(", ")} · ${glyphs.length} глифов`;
+  renderList();
+  select(0);
+};
+
+document.getElementById("save").onclick = () => {
+  if (!glyphs.length) return;
+  const blob = new Blob([exportH()], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = fontName.includes("cyr") ? "font8x16_cyr.h" : "font8x16.h";
+  a.click();
+};
+</script>
+</body>
+</html>

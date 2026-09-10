@@ -1,0 +1,29 @@
+E220-400T30D         ESP32-S3 (YD-ESP32-23)
+──────────────────────────────────────────────
+VCC              →   5V  (3.3-5.5V, 5V для 30dBm)
+GND              →   GND
+TXD              →   GPIO 18 (ESP RX)
+RXD              →   GPIO 17 (ESP TX)
+AUX              →   GPIO 38
+M0               →   GPIO 39
+M1               →   GPIO 40
+
+
+SSD1306 OLED (I2C)   ESP32-S3
+──────────────────────────────────────────────
+SDA              →   GPIO 21
+SCL              →   GPIO 47
+
+
+=== СТАРАЯ КОНФИГУРАЦИЯ (Ra-02 / SX1278) ===
+
+Ra-02 (SX1278)       ESP32-S3 (YD-ESP32-23)
+──────────────────────────────────────────────
+VCC              →   3.3V
+GND              →   GND
+SCK              →   GPIO 36
+MISO             →   GPIO 37
+MOSI             →   GPIO 35
+NSS (CS)         →   GPIO 38
+RST              →   GPIO 39
+DIO0             →   GPIO 40

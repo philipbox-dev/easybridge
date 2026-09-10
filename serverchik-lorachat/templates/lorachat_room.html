@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ net.name }} — LoRa-чат</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg:#0f1216; --panel:#171c23; --line:#232a34; --fg:#e6e9ee;
+    --dim:#98a2b3; --accent:#4da3ff; --air:#f0a83c; --ok:#4ade80; --bad:#f87171;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, sans-serif; background: var(--bg);
+    color: var(--fg); height: 100dvh; display: grid;
+    grid-template-columns: 240px 1fr; grid-template-rows: auto 1fr auto; }
+
+  header { grid-column: 1/-1; display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  header h1 { font-size: 1rem; margin: 0; }
+  header .me { color: var(--dim); font-size: .82rem; }
+  .link { margin-left:auto; display:flex; gap:10px; align-items:center; font-size:.78rem; }
+  .dot { width:8px; height:8px; border-radius:50%; background: var(--bad); }
+  .dot.on { background: var(--ok); }
+  .gw { color: var(--dim); }
+  .gw.on { color: var(--air); }
+
+  aside { border-right: 1px solid var(--line); padding: 12px; overflow-y: auto; }
+  aside h2 { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em;
+    color: var(--dim); margin: 4px 0 8px; }
+  .peer { display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:9px;
+    cursor:pointer; font-size:.88rem; }
+  .peer:hover { background:#1b212a; }
+  .peer[aria-selected="true"] { background:#1d2c3d; }
+  .peer .st { width:7px; height:7px; border-radius:50%; background:#39414d; }
+  .peer .st.on { background: var(--ok); }
+  .peer .via { margin-left:auto; font-size:.68rem; color:var(--dim); }
+
+  main { overflow-y:auto; padding: 14px 18px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width: 62ch; padding:9px 13px; border-radius:13px; background: var(--panel);
+    border:1px solid var(--line); }
+  .msg.mine { align-self:flex-end; background:#1d2c3d; border-color:#274058; }
+  .msg .who { font-size:.74rem; color: var(--accent); margin-bottom:2px; }
+  .msg .body { font-size:.92rem; line-height:1.45; white-space:pre-wrap; word-break:break-word; }
+  .msg .meta { font-size:.68rem; color:var(--dim); margin-top:5px; display:flex; gap:8px; }
+  .msg.sos { border-color:#7f1d1d; background:#2a1010; }
+  .msg.sys { align-self:center; background:none; border:0; color:var(--dim); font-size:.78rem; }
+  .tag { border:1px solid var(--line); border-radius:999px; padding:0 6px; }
+  .tag.air { color:var(--air); border-color:#4a3a1c; }
+  .tag.web { color:var(--accent); border-color:#24455f; }
+  .msg img, .msg video { max-width:100%; border-radius:9px; margin-top:6px; display:block; }
+  .msg audio { width:100%; margin-top:6px; }
+
+  footer { grid-column:1/-1; border-top:1px solid var(--line); padding:10px 14px;
+    display:flex; gap:9px; align-items:flex-end; }
+  textarea { flex:1; resize:none; min-height:42px; max-height:140px; padding:10px 13px;
+    border-radius:11px; border:1px solid var(--line); background:var(--panel);
+    color:inherit; font:inherit; font-size:.92rem; }
+  footer button { border:0; border-radius:11px; padding:11px 16px; font:inherit;
+    font-weight:600; cursor:pointer; background:var(--accent); color:var(--bg); }
+  footer button.sos { background:#7f1d1d; color:#fee; }
+  footer button.attach { background:var(--panel); color:var(--dim); border:1px solid var(--line); }
+  .callbar { grid-column:1/-1; display:none; align-items:center; gap:12px;
+    padding:8px 16px; background:#12251a; border-bottom:1px solid #2b5c3b;
+    font-size:.84rem; }
+  .callbar.on { display:flex; }
+  .callbar.air { background:#2a1f10; border-color:#4a3a1c; }
+  .cdot { width:9px; height:9px; border-radius:50%; background:var(--ok);
+    animation: pulse 1.6s infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .level { width:70px; height:6px; border-radius:3px; background:#0f1216;
+    overflow:hidden; }
+  .level i { display:block; height:100%; width:0; background:var(--ok);
+    transition: width .08s linear; }
+  .cpeers { color:var(--dim); font-size:.78rem; }
+  .cbtn { border:1px solid var(--line); background:var(--panel); color:var(--fg);
+    border-radius:9px; padding:6px 12px; font:inherit; font-size:.8rem; cursor:pointer; }
+  .cbtn.bad { background:#7f1d1d; border-color:#7f1d1d; color:#fee; }
+  .cbtn.off { color:var(--dim); }
+  footer #call { padding:11px 14px; }
+  .widget { border:1px solid var(--line); border-radius:11px; padding:9px 11px;
+    margin-bottom:8px; background:#141922; }
+  .widget h3 { margin:0 0 5px; font-size:.82rem; display:flex; gap:6px;
+    align-items:center; }
+  .widget .st { width:7px; height:7px; border-radius:50%; background:var(--ok); }
+  .widget.stale { opacity:.55; }
+  .widget.stale .st { background:var(--air); }
+  .widget .row { display:flex; justify-content:space-between; font-size:.8rem;
+    padding:1px 0; }
+  .widget .row b { font-weight:600; }
+  .widget .cmds { display:flex; gap:5px; flex-wrap:wrap; margin-top:7px; }
+  .widget .cmds button { font-size:.72rem; padding:3px 8px; border-radius:7px;
+    border:1px solid var(--line); background:var(--panel); color:var(--fg);
+    cursor:pointer; }
+  .lc-dim { color:var(--dim); font-size:.8rem; }
+  .btnrow { grid-column:1/-1; display:flex; gap:7px; flex-wrap:wrap;
+    padding:7px 14px 0; }
+  .btnrow:empty { display:none; }
+  .btnrow button { border:1px solid var(--line); background:var(--panel);
+    color:var(--fg); border-radius:999px; padding:5px 13px; font:inherit;
+    font-size:.8rem; cursor:pointer; }
+  .btnrow button.sos { border-color:#7f1d1d; color:#f87171; }
+  .banner { grid-column:1/-1; padding:7px 16px; font-size:.8rem; background:#2a1f10;
+    color:var(--air); border-bottom:1px solid #4a3a1c; display:none; }
+  @media (max-width: 700px) {
+    body { grid-template-columns: 1fr; }
+    aside { display:none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>{{ net.name }}</h1>
+  <span class="me">{{ me.display_name or me.username }}</span>
+  <span class="link">
+    <span class="dot" id="dot"></span><span id="linkState">подключаюсь…</span>
+    <span class="gw" id="gw" title="Телефон-шлюз выносит сообщения в эфир">эфир: —</span>
+  </span>
+</header>
+<div class="banner" id="banner"></div>
+
+<div class="callbar" id="callbar">
+  <span class="cdot" id="cdot"></span>
+  <span id="callInfo">Звонок</span>
+  <span class="level"><i id="level"></i></span>
+  <span class="cpeers" id="callPeers"></span>
+  <button id="mute" class="cbtn">Микрофон вкл</button>
+  <button id="hang" class="cbtn bad">Положить</button>
+</div>
+
+<aside>
+  <h2>Участники</h2>
+  <div class="peer" data-id="" aria-selected="true">
+    <span class="st on"></span><span>Все (общий чат)</span>
+  </div>
+  {% for p in peers %}
+    <div class="peer" data-id="{{ p.id }}" data-node="{{ p.node_id or '' }}">
+      <span class="st" data-st="{{ p.id }}"></span>
+      <span>{{ p.display_name or p.username }}</span>
+      <span class="via" data-via="{{ p.id }}"></span>
+    </div>
+  {% endfor %}
+
+  <h2 style="margin-top:18px">Устройства</h2>
+  <div id="devices"><span class="lc-dim">—</span></div>
+</aside>
+
+<main id="feed"></main>
+
+<div class="btnrow" id="btnrow"></div>
+
+<footer>
+  <button class="attach" id="attach" title="Фото, голос, файл">📎</button>
+  <input type="file" id="file" hidden>
+  <textarea id="input" placeholder="Сообщение…  Enter — отправить"></textarea>
+  <button id="send">Отправить</button>
+  <button id="call" class="cbtn" title="Позвонить: веб + эфир для тех, кого нет в сети">📞</button>
+  <button class="sos" id="sos" title="Тревога всем и по эфиру">SOS</button>
+</footer>
+
+<script src="/static/lorachat/call.js"></script>
+<script>
+const ME = {{ me.id }};
+const WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://')
+             + location.host + {{ ws_url | tojson }};
+const ONLINE = new Set({{ online | tojson }});
+const PEERS = {};
+document.querySelectorAll('.peer[data-id]').forEach(el => {
+  if (el.dataset.id) PEERS[el.dataset.id] = { node: el.dataset.node || '' };
+});
+
+let ws = null, target = null, retry = 0, seenIds = new Set();
+const feed = document.getElementById('feed');
+const input = document.getElementById('input');
+const banner = document.getElementById('banner');
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c =>
+  ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+
+function say(text, cls) {
+  const d = document.createElement('div');
+  d.className = 'msg sys ' + (cls || '');
+  d.textContent = text;
+  feed.appendChild(d);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function renderMsg(m) {
+  if (seenIds.has(m.id)) return;
+  seenIds.add(m.id);
+  const mine = m.from === ME;
+  const d = document.createElement('div');
+  d.className = 'msg' + (mine ? ' mine' : '') + (m.kind === 'sos' ? ' sos' : '');
+
+  // Откуда пришло — не украшение: «по эфиру» значит, что текст мог
+  // прийти обрезанным и без вложения.
+  const via = m.origin === 'lora'
+    ? '<span class="tag air">по эфиру</span>'
+    : '<span class="tag web">через веб</span>';
+  const t = new Date(m.ts).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' });
+
+  let media = '';
+  if (m.media) {
+    const url = esc(m.media.url), mime = m.media.mime || '';
+    if (mime.startsWith('image/')) media = `<img src="${url}" alt="">`;
+    else if (mime.startsWith('audio/')) media = `<audio controls src="${url}"></audio>`;
+    else if (mime.startsWith('video/')) media = `<video controls src="${url}"></video>`;
+    else media = `<a href="${url}" download>${esc(m.media.name || 'файл')}</a>`;
+  }
+
+  d.innerHTML =
+    (mine ? '' : `<div class="who">${esc(m.from_name)}</div>`) +
+    `<div class="body">${esc(m.text)}</div>` + media +
+    `<div class="meta">${via}<span>${t}</span>` +
+    (m.kind === 'sos' ? '<span class="tag">SOS</span>' : '') + '</div>';
+  feed.appendChild(d);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function setLink(ok, note) {
+  document.getElementById('dot').className = 'dot' + (ok ? ' on' : '');
+  document.getElementById('linkState').textContent = note;
+}
+
+function setGateway(on) {
+  const el = document.getElementById('gw');
+  el.className = 'gw' + (on ? ' on' : '');
+  el.textContent = on ? 'эфир: есть шлюз' : 'эфир: нет шлюза';
+  // Без шлюза мы физически не можем достучаться до тех, кого нет в
+  // вебе. Сказать об этом сразу честнее, чем принять сообщение и
+  // молча его не доставить.
+  banner.style.display = on ? 'none' : 'block';
+  banner.textContent = 'Ни один телефон сейчас не подключён шлюзом — '
+    + 'участники, которых нет в вебе, сообщений не получат.';
+}
+
+function connect() {
+  ws = new WebSocket(WS_URL);
+  // Звук ходит бинарём — без этого он приедет как Blob и его придётся
+  // читать асинхронно, ломая порядок кадров.
+  ws.binaryType = 'arraybuffer';
+  ws.onopen = () => { retry = 0; setLink(true, 'на связи'); };
+  ws.onclose = () => {
+    setLink(false, 'переподключаюсь…');
+    // Пауза растёт до 15 с: сервер могли перезапустить, долбиться
+    // каждые полсекунды бессмысленно.
+    retry = Math.min(retry + 1, 10);
+    setTimeout(connect, Math.min(500 * retry, 15000));
+  };
+  ws.onerror = () => setLink(false, 'нет связи');
+  ws.onmessage = ev => {
+    if (ev.data instanceof ArrayBuffer) { call.onBinary(ev.data); return; }
+    let d; try { d = JSON.parse(ev.data); } catch { return; }
+    switch (d.op) {
+      case 'hello_ok':
+        (d.online || []).forEach(id => ONLINE.add(id));
+        paintPeers(); setGateway(d.gateway); loadHistory(); break;
+      case 'msg':   renderMsg(d.msg); break;
+      case 'sent':
+        renderMsg(d.msg);
+        if (d.routes && d.routes.lora_blocked)
+          say('Некому вынести в эфир — доставлено только тем, кто в вебе', '');
+        break;
+      case 'presence':
+        d.online ? ONLINE.add(d.member) : ONLINE.delete(d.member);
+        paintPeers(); setGateway(d.gateway); break;
+      case 'delivery':
+        if (d.via === 'lora' && d.state === 'failed')
+          say('Не удалось передать по эфиру'); break;
+      case 'dev_hello':
+        DEVICES.set(d.device.node_id, d.device); renderDevices(); break;
+      case 'dev_data': {
+        const cur = DEVICES.get(d.node_id);
+        if (cur) {
+          Object.assign(cur, { values: d.values, rssi: d.rssi,
+                               derived: d.derived, stale: false });
+          renderDevices();
+        } else {
+          loadDevices();     // услышали устройство, которого ещё не знаем
+        }
+        break;
+      }
+      case 'dev_ack':
+        say((d.status ? 'Устройство отклонило команду: ' : 'Устройство: ')
+            + (d.desc || '')); break;
+      case 'dev_cmd_ok': break;
+      case 'call_state':  onCallState(d); break;
+      case 'call_invite': onCallInvite(d); break;
+      case 'call_end':    onCallEnd(); break;
+      case 'call_floor':  onFloor(d); break;
+      case 'error':
+        say('Ошибка: ' + (d.desc || d.code)); break;
+    }
+  };
+}
+
+/* ─────────────────────────── Звонок ───────────────────────────
+ * Веб-участники слышат друг друга свободно. Тех, кого в вебе нет,
+ * подхватывает телефон-шлюз: он перекодирует звук и выносит его в
+ * эфир по FSK. Поэтому в панели два разных состояния — «только веб»
+ * и «с эфиром», и это важно видеть: у эфирного плеча качество хуже
+ * и говорить может только один.
+ */
+let call = null, inCall = false;
+const callbar = document.getElementById('callbar');
+
+function initCall() {
+  if (!window.LoraCall || !LoraCall.CallClient.supported) return null;
+  return new LoraCall.CallClient(ws, {
+    onLevel: v => {
+      document.getElementById('level').style.width =
+        Math.min(100, Math.round(v * 180)) + '%';
+    },
+    onSpeaker: (member, fromAir) => {
+      callbar.classList.toggle('air', !!fromAir);
+    },
+  });
+}
+
+async function startCall(join) {
+  if (!window.LoraCall || !LoraCall.CallClient.supported) {
+    say('Браузер не даёт доступ к микрофону — звонок недоступен');
+    return;
+  }
+  if (!ws || ws.readyState !== 1) { say('Нет связи с сервером'); return; }
+  call = call || initCall();
+  call.ws = ws;
+  try {
+    await call.start();
+  } catch (e) {
+    // Отказ в микрофоне — самая частая причина: скажем прямо, а не
+    // «что-то пошло не так».
+    say('Микрофон недоступен: ' + (e.name === 'NotAllowedError'
+        ? 'вы запретили доступ' : e.message));
+    return;
+  }
+  inCall = true;
+  callbar.classList.add('on');
+  ws.send(JSON.stringify({ op: join ? 'call_join' : 'call_start',
+                           codec: call.codec }));
+}
+
+function hangUp() {
+  if (call) call.stop();
+  inCall = false;
+  callbar.classList.remove('on', 'air');
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify({ op: 'call_leave' }));
+}
+
+function onCallState(d) {
+  if (!inCall) return;
+  // Звонок с эфирным плечом идёт на PCM: телефон-мост пережимает его
+  // в AMR-NB, и Opus он принять не может.
+  if (call && typeof d.codec === 'number') call.forceCodec(d.codec);
+  const names = (d.web || []).map(id => {
+    if (id === ME) return 'вы';
+    const el = document.querySelector('.peer[data-id="' + id + '"] span:nth-child(2)');
+    return el ? el.textContent : ('#' + id);
+  });
+  const air = (d.air || []).map(a => a.name);
+  document.getElementById('callPeers').textContent =
+    'в вебе: ' + (names.join(', ') || '—') +
+    (air.length ? ' · в эфире: ' + air.join(', ') : '');
+  document.getElementById('callInfo').textContent =
+    d.bridged ? 'Звонок + эфир' : 'Звонок';
+  if (d.note) say(d.note);
+}
+
+function onCallInvite(d) {
+  if (inCall) return;
+  const who = d.from_name || 'кто-то';
+  say(who + ' начал звонок' + (d.bridged ? ' (с выходом в эфир)' : ''));
+  // Автоматически трубку не берём: микрофон включается только по
+  // явному действию человека, иначе это подслушивание.
+  document.getElementById('call').classList.add('off');
+  document.getElementById('call').title = who + ' звонит — нажмите, чтобы войти';
+}
+
+function onCallEnd() {
+  if (inCall) say('Звонок завершён');
+  if (call) call.stop();
+  inCall = false;
+  callbar.classList.remove('on', 'air');
+  document.getElementById('call').classList.remove('off');
+}
+
+function onFloor(d) {
+  if (!inCall) return;
+  // Слово нужно только для эфирного плеча: в вебе перебивать можно.
+  if (!d.granted && d.holder && d.holder !== ME) {
+    callbar.classList.add('air');
+  }
+}
+
+document.getElementById('call').onclick = () => startCall(false);
+document.getElementById('hang').onclick = hangUp;
+document.getElementById('mute').onclick = e => {
+  if (!call) return;
+  const muted = !call.muted;
+  call.setMuted(muted);
+  e.target.textContent = muted ? 'Микрофон выкл' : 'Микрофон вкл';
+  e.target.classList.toggle('off', muted);
+};
+window.addEventListener('beforeunload', () => { if (inCall) hangUp(); });
+
+function paintPeers() {
+  document.querySelectorAll('[data-st]').forEach(el => {
+    const on = ONLINE.has(Number(el.dataset.st));
+    el.className = 'st' + (on ? ' on' : '');
+  });
+  document.querySelectorAll('[data-via]').forEach(el => {
+    el.textContent = ONLINE.has(Number(el.dataset.via)) ? 'веб' : 'эфир';
+  });
+}
+
+async function loadHistory() {
+  try {
+    const r = await fetch('/lora-chat/api/history?limit=100', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok) d.messages.forEach(renderMsg);
+  } catch (e) { say('История не загрузилась'); }
+}
+
+function send(kind, extra) {
+  const text = input.value.trim();
+  if (kind === 'text' && !text) return;
+  if (!ws || ws.readyState !== 1) { say('Нет связи с сервером'); return; }
+  ws.send(JSON.stringify({
+    op: 'msg', kind: kind, text: kind === 'sos' ? (text || 'SOS') : text,
+    to: target, ref: Date.now(), ...(extra || {})
+  }));
+  input.value = '';
+}
+
+document.getElementById('send').onclick = () => send('text');
+document.getElementById('sos').onclick = () => {
+  if (confirm('Отправить SOS всем участникам — и по вебу, и по эфиру?')) send('sos');
+};
+input.onkeydown = e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send('text'); }
+};
+
+document.getElementById('attach').onclick = () => document.getElementById('file').click();
+document.getElementById('file').onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const fd = new FormData(); fd.append('file', f);
+  say('Загружаю ' + f.name + '…');
+  try {
+    const r = await fetch('/lora-chat/api/media', { method: 'POST', body: fd,
+                                                    credentials: 'same-origin' });
+    const d = await r.json();
+    if (!d.ok) { say('Не загрузилось: ' + d.desc); return; }
+    const kind = f.type.startsWith('image/') ? 'image'
+               : f.type.startsWith('audio/') ? 'voice' : 'file';
+    send(kind, { media_id: d.media.id });
+  } catch (err) { say('Не загрузилось: ' + err.message); }
+  e.target.value = '';
+};
+
+document.querySelectorAll('.peer').forEach(el => {
+  el.onclick = () => {
+    document.querySelectorAll('.peer').forEach(p => p.setAttribute('aria-selected', 'false'));
+    el.setAttribute('aria-selected', 'true');
+    target = el.dataset.id ? Number(el.dataset.id) : null;
+    input.placeholder = target
+      ? 'Личное сообщение…' : 'Сообщение…  Enter — отправить';
+  };
+});
+
+/* ───────────────────── Устройства и кнопки ─────────────────────
+ * Датчик объявляет себя сам, поэтому список подгружается и потом
+ * обновляется событиями — заводить виджет руками не нужно.
+ */
+const DEVICES = new Map();
+
+function fmtValue(v) {
+  if (v === null || v === undefined) return '—';
+  if (typeof v === 'number' && !Number.isInteger(v)) return v.toFixed(1);
+  return String(v);
+}
+
+function renderDevices() {
+  const box = document.getElementById('devices');
+  if (!DEVICES.size) { box.innerHTML = '<span class="lc-dim">—</span>'; return; }
+  box.innerHTML = [...DEVICES.values()].map(d => {
+    const title = (d.widget && d.widget.title) || d.name || d.node_id;
+    const rows = (d.fields || []).map(f => {
+      const v = d.values ? d.values[String(f.i)] : undefined;
+      const shown = f.scale ? (Number(v) * Math.pow(10, f.scale)) : v;
+      return `<div class="row"><span>${esc(f.name)}</span>` +
+             `<b>${esc(fmtValue(shown))} ${esc(f.unit || '')}</b></div>`;
+    }).join('');
+    const derived = (d.derived || []).map(r =>
+      `<div class="row"><span>${esc(r.label)}</span>` +
+      `<b>${esc(fmtValue(r.value))} ${esc(r.unit || '')}</b></div>`).join('');
+    const cmds = (d.cmds || []).map(c =>
+      `<button data-node="${esc(d.node_id)}" data-cmd="${c.id}">${esc(c.name)}</button>`
+    ).join('');
+    return `<div class="widget ${d.stale ? 'stale' : ''}">
+      <h3><span class="st"></span>${esc(title)}</h3>${rows}${derived}
+      ${cmds ? `<div class="cmds">${cmds}</div>` : ''}</div>`;
+  }).join('');
+
+  box.querySelectorAll('.cmds button').forEach(b => {
+    b.onclick = () => {
+      // Команда уходит на железо, поэтому спрашиваем: включённое не
+      // вовремя реле отменить уже нельзя.
+      if (!confirm('Отправить «' + b.textContent + '» устройству?')) return;
+      ws.send(JSON.stringify({ op: 'dev_cmd', node_id: b.dataset.node,
+                               id: Number(b.dataset.cmd), arg: 1 }));
+      say('Команда отправлена — ждём подтверждения от устройства');
+    };
+  });
+}
+
+async function loadDevices() {
+  try {
+    const r = await fetch('/lora-chat/api/devices', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (d.ok) { d.devices.forEach(x => DEVICES.set(x.node_id, x)); renderDevices(); }
+  } catch (e) { /* сеть моргнула — обновимся на следующем событии */ }
+}
+
+async function loadButtons() {
+  try {
+    const r = await fetch('/lora-chat/api/buttons', { credentials: 'same-origin' });
+    const d = await r.json();
+    if (!d.ok) return;
+    const row = document.getElementById('btnrow');
+    row.innerHTML = d.buttons.map(b =>
+      `<button data-btn="${b.id}" data-confirm="${b.confirm ? 1 : 0}"` +
+      ` class="${b.kind === 'sos' ? 'sos' : ''}">${esc(b.icon || '')} ${esc(b.label)}</button>`
+    ).join('');
+    row.querySelectorAll('button').forEach(b => {
+      b.onclick = () => {
+        if (b.dataset.confirm === '1' &&
+            !confirm('Нажать «' + b.textContent.trim() + '»?')) return;
+        ws.send(JSON.stringify({ op: 'button', id: Number(b.dataset.btn) }));
+      };
+    });
+  } catch (e) { /* не критично */ }
+}
+
+paintPeers();
+connect();
+loadDevices();
+loadButtons();
+</script>
+</body>
+</html>

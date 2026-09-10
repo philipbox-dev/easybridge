@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<title>EasyBridge — техническая документация V2.6–2.8</title>
+<style>
+:root{
+  --bg:#eef1f2; --panel:#ffffff; --ink:#16232b; --muted:#5b6b75;
+  --accent:#0e7a5f; --accent-soft:#0e7a5f22; --warn:#b45309; --warn-soft:#b4530918;
+  --bad:#b0362f; --line:#d5dde0; --code-bg:#e7edee; --grid:#c8d2d6;
+  --mono:ui-monospace,'JetBrains Mono','Cascadia Code',Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0c1418; --panel:#121d23; --ink:#d8e2e6; --muted:#8ca0a8;
+    --accent:#43c99a; --accent-soft:#43c99a1e; --warn:#e0a458; --warn-soft:#e0a45816;
+    --bad:#e07a72; --line:#22323a; --code-bg:#0e181e; --grid:#2a3b44;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1418; --panel:#121d23; --ink:#d8e2e6; --muted:#8ca0a8;
+  --accent:#43c99a; --accent-soft:#43c99a1e; --warn:#e0a458; --warn-soft:#e0a45816;
+  --bad:#e07a72; --line:#22323a; --code-bg:#0e181e; --grid:#2a3b44;
+}
+:root[data-theme="light"]{
+  --bg:#eef1f2; --panel:#ffffff; --ink:#16232b; --muted:#5b6b75;
+  --accent:#0e7a5f; --accent-soft:#0e7a5f22; --warn:#b45309; --warn-soft:#b4530918;
+  --bad:#b0362f; --line:#d5dde0; --code-bg:#e7edee; --grid:#c8d2d6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans)}
+.wrap{max-width:960px;margin:0 auto;padding:32px 20px 96px}
+header.hero{border:1px solid var(--line);background:var(--panel);padding:32px 32px 26px;margin-bottom:28px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+h1{font:700 clamp(26px,4vw,40px)/1.15 var(--mono);letter-spacing:-.01em;margin:0 0 12px;text-wrap:balance}
+.sub{color:var(--muted);max-width:64ch;margin:0}
+h2{font:700 22px/1.25 var(--mono);letter-spacing:.01em;margin:0 0 6px;color:var(--ink)}
+h2 .sec{color:var(--accent);margin-right:.5em}
+h3{font:700 16px/1.3 var(--mono);margin:28px 0 10px}
+h4{font:700 14px/1.3 var(--sans);margin:20px 0 6px}
+section{border:1px solid var(--line);background:var(--panel);padding:28px 32px;margin:0 0 28px}
+p{max-width:72ch}
+p,ul,ol{margin:0 0 14px}
+li{margin-bottom:6px}
+code,kbd{font:13.5px/1.5 var(--mono);background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{background:var(--code-bg);border:1px solid var(--line);padding:14px 16px;overflow-x:auto;font:13px/1.55 var(--mono);margin:0 0 16px}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:0 0 16px}
+.tblwrap{overflow-x:auto;margin:0 0 16px}
+th{font:600 11.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line)}
+td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px;white-space:nowrap}
+td code{white-space:nowrap}
+.toc{columns:2;column-gap:36px;font-size:14.5px}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px dotted var(--grid)}
+.toc a:hover,.toc a:focus{color:var(--accent);border-bottom-color:var(--accent)}
+.toc li{break-inside:avoid}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;margin:0 0 16px;font-size:14.5px}
+.warnbox{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;margin:0 0 16px;font-size:14.5px}
+.badbox{border-left:3px solid var(--bad);background:color-mix(in srgb,var(--bad) 9%,transparent);padding:12px 16px;margin:0 0 16px;font-size:14.5px}
+figure{margin:20px 0 24px}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font:12.5px/1.5 var(--mono);color:var(--muted);margin-top:8px}
+.diagram{overflow-x:auto;border:1px solid var(--line);background:var(--code-bg);padding:12px}
+/* byte-map */
+.bytemap{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;font:12px/1.35 var(--mono);margin:0 0 6px;min-width:560px}
+.bytemap>div{background:var(--panel);border:1px solid var(--grid);padding:6px 6px 4px;min-height:52px}
+.bytemap .off{color:var(--muted);font-size:10px;display:block}
+.bytemap .fname{font-weight:700}
+.bm-magic{border-top:3px solid var(--accent) !important}
+.bm-id{border-top:3px solid #4a7fb5 !important}
+.bm-route{border-top:3px solid var(--warn) !important}
+.bm-frag{border-top:3px solid #9a6bb0 !important}
+.span2{grid-column:span 2}.span4{grid-column:span 4}
+/* physics cards */
+.phys{border:1px solid var(--line);padding:18px 20px;margin:0 0 18px}
+.phys.pro{border-left:4px solid var(--accent)}
+.phys.con{border-left:4px solid var(--warn)}
+.phys h4{margin:0 0 8px;font-family:var(--mono)}
+.phys .tag{font:600 10.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;margin-right:8px}
+.phys.pro .tag{background:var(--accent-soft);color:var(--accent)}
+.phys.con .tag{background:var(--warn-soft);color:var(--warn)}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 18px;font-size:14px;margin:0 0 14px}
+.kv dt{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.kv dd{margin:0}
+/* svg shared */
+.sv-box{fill:var(--panel);stroke:var(--grid);stroke-width:1.2}
+.sv-boxa{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.sv-boxw{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.2}
+.sv-t{font:12px var(--mono);fill:var(--ink)}
+.sv-ts{font:10.5px var(--mono);fill:var(--muted)}
+.sv-tb{font:700 12px var(--mono);fill:var(--ink)}
+.sv-ta{font:700 11px var(--mono);fill:var(--accent)}
+.sv-tw{font:700 11px var(--mono);fill:var(--warn)}
+.sv-l{stroke:var(--ink);stroke-width:1.2;fill:none}
+.sv-la{stroke:var(--accent);stroke-width:1.6;fill:none}
+.sv-lw{stroke:var(--warn);stroke-width:1.6;fill:none}
+.sv-ld{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3;fill:none}
+.sv-life{stroke:var(--grid);stroke-width:1;stroke-dasharray:2 3}
+.bar{fill:var(--accent)}
+.barw{fill:var(--warn)}
+@media (max-width:760px){ .toc{columns:1} section{padding:20px 16px} header.hero{padding:22px 18px} }
+@media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">EasyBridge · firmware V2.6–V2.8 · ESP-IDF 5.5</p>
+  <h1>Анатомия LoRa-моста:<br>от JSON в BLE до фотона в антенне</h1>
+  <p class="sub">Полная техническая документация прошивки EasyBridge: слои, задачи FreeRTOS,
+  эфирный протокол proto25 побайтово, сценарии обмена, анти-коллизионная механика —
+  и отдельный разбор радиофизики: где она играет за нас, а где убивает пакеты.
+  Написано по исходникам, все ссылки — <code>файл:строка</code>.</p>
+</header>
+
+<section id="toc">
+  <h2><span class="sec">§0</span>Оглавление</h2>
+  <ol class="toc">
+    <li><a href="#sys">Система с высоты птичьего полёта</a></li>
+    <li><a href="#hw">Железо: платы и радио</a></li>
+    <li><a href="#layers">Слои прошивки</a></li>
+    <li><a href="#tasks">Задачи FreeRTOS и очереди</a></li>
+    <li><a href="#proto">Эфирный протокол proto25</a></li>
+    <li><a href="#anticol">Анти-коллизионная механика</a></li>
+    <li><a href="#flows">Сценарии: как летит каждый пакет</a></li>
+    <li><a href="#ble">BLE-интерфейс (JSON API)</a></li>
+    <li><a href="#physics">Физика: бюджет линка и airtime</a></li>
+    <li><a href="#pro">Физика ЗА нас — 6 сценариев</a></li>
+    <li><a href="#con">Физика ПРОТИВ нас — 8 сценариев</a></li>
+    <li><a href="#bugs">Грабли и подозрения на баги</a></li>
+    <li><a href="#roadmap">Что обновить / добавить / переделать</a></li>
+    <li><a href="#antennas">Антенны: диаграмма направленности на практике</a></li>
+  </ol>
+</section>
+
+<!-- ============================================================ -->
+<section id="sys">
+  <h2><span class="sec">§1</span>Система с высоты птичьего полёта</h2>
+  <p>EasyBridge — это <em>прозрачный мост</em> между телефоном и эфиром. Телефон
+  (приложение EasyLink) делает весь UI и кодеки; устройство отвечает за радио,
+  меш-ретрансляцию и выживание пакетов в эфире. Между ними — BLE GATT
+  (Nordic UART Service) с JSON-командами.</p>
+
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 240" role="img" aria-label="Схема системы: телефон, BLE, ESP32, LoRa, эфир, и зеркально">
+      <!-- phone A -->
+      <rect x="10" y="60" width="130" height="120" class="sv-box"/>
+      <text x="75" y="85" text-anchor="middle" class="sv-tb">Телефон A</text>
+      <text x="75" y="105" text-anchor="middle" class="sv-ts">EasyLink (Android)</text>
+      <text x="75" y="125" text-anchor="middle" class="sv-ts">UI · история</text>
+      <text x="75" y="140" text-anchor="middle" class="sv-ts">AMR-NB кодек</text>
+      <text x="75" y="155" text-anchor="middle" class="sv-ts">GPS · карта</text>
+      <!-- BLE link -->
+      <line x1="140" y1="120" x2="205" y2="120" class="sv-la"/>
+      <text x="172" y="108" text-anchor="middle" class="sv-ta">BLE</text>
+      <text x="172" y="136" text-anchor="middle" class="sv-ts">JSON/NUS</text>
+      <!-- ESP A -->
+      <rect x="205" y="60" width="160" height="120" class="sv-boxa"/>
+      <text x="285" y="85" text-anchor="middle" class="sv-tb">EasyBridge A</text>
+      <text x="285" y="105" text-anchor="middle" class="sv-ts">ESP32 + LoRa-радио</text>
+      <text x="285" y="125" text-anchor="middle" class="sv-ts">proto25 · mesh-relay</text>
+      <text x="285" y="140" text-anchor="middle" class="sv-ts">dedup · rate-limit</text>
+      <text x="285" y="155" text-anchor="middle" class="sv-ts">LBT/CAD · очереди</text>
+      <!-- air -->
+      <line x1="365" y1="120" x2="530" y2="120" class="sv-lw"/>
+      <text x="447" y="105" text-anchor="middle" class="sv-tw">433 / 869 МГц</text>
+      <text x="447" y="138" text-anchor="middle" class="sv-ts">LoRa CSS (или GFSK для PTT)</text>
+      <!-- ESP B -->
+      <rect x="530" y="60" width="160" height="120" class="sv-boxa"/>
+      <text x="610" y="85" text-anchor="middle" class="sv-tb">EasyBridge B</text>
+      <text x="610" y="105" text-anchor="middle" class="sv-ts">приём · сборка</text>
+      <text x="610" y="125" text-anchor="middle" class="sv-ts">фрагментов · ACK</text>
+      <text x="610" y="140" text-anchor="middle" class="sv-ts">relay для C, D…</text>
+      <!-- BLE B -->
+      <line x1="690" y1="120" x2="755" y2="120" class="sv-la"/>
+      <text x="722" y="108" text-anchor="middle" class="sv-ta">BLE</text>
+      <!-- phone B -->
+      <rect x="755" y="60" width="130" height="120" class="sv-box"/>
+      <text x="820" y="85" text-anchor="middle" class="sv-tb">Телефон B</text>
+      <text x="820" y="105" text-anchor="middle" class="sv-ts">EasyLink</text>
+      <!-- mesh node -->
+      <rect x="410" y="185" width="80" height="40" class="sv-box"/>
+      <text x="450" y="203" text-anchor="middle" class="sv-ts">Узел C</text>
+      <text x="450" y="217" text-anchor="middle" class="sv-ts">(relay)</text>
+      <line x1="330" y1="180" x2="415" y2="195" class="sv-ld"/>
+      <line x1="485" y1="195" x2="570" y2="180" class="sv-ld"/>
+      <text x="447" y="30" text-anchor="middle" class="sv-t">до 5 хопов, дедупликация, случайный джиттер relay</text>
+      <line x1="447" y1="38" x2="447" y2="95" class="sv-ld"/>
+    </svg>
+    </div>
+    <figcaption>Рис. 1 — Устройство не хранит историю и не кодирует звук: оно транспорт + меш.
+    Телефон без устройства глух, устройство без телефона — автономный ретранслятор.</figcaption>
+  </figure>
+
+  <p>Ключевая идея разделения труда: <strong>всё тяжёлое (кодеки, шифрование
+  голоса base64, карта) — на телефоне</strong>; всё времязависимое (тайминги эфира,
+  джиттер ретрансляции, LBT) — на ESP32, где FreeRTOS даёт миллисекундную точность,
+  недостижимую через BLE-стек Android.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="hw">
+  <h2><span class="sec">§2</span>Железо: платы и радио</h2>
+  <p>Один бинарник на плату; плата выбирается на этапе сборки через Kconfig
+  (<code>CONFIG_EB_BOARD_*</code> → <code>main/boards/board.h</code>). Заголовок платы задаёт пины,
+  тип радио, частоту, наличие батареи и дисплея.</p>
+
+  <div class="tblwrap"><table>
+    <tr><th>Плата</th><th>МК</th><th>Радио</th><th>Шина</th><th>Частота</th><th>Мощность</th><th>LBT/CAD</th><th>FSK (PTT)</th><th>hw_id</th></tr>
+    <tr><td><code>s3_e220</code></td><td>ESP32-S3</td><td>E220-400T30D</td><td>UART 9600</td><td class="num">433.125 МГц</td><td class="num">30 dBm (1 Вт)</td><td>нет</td><td>нет</td><td class="num">1</td></tr>
+    <tr><td><code>c6_e220</code></td><td>ESP32-C6</td><td>E220-400T30D</td><td>UART 9600</td><td class="num">433.125 МГц</td><td class="num">30 dBm</td><td>нет</td><td>нет</td><td class="num">2</td></tr>
+    <tr><td><code>t3_v161</code></td><td>ESP32</td><td>SX1276</td><td>SPI 1 МГц</td><td class="num">869.525 МГц</td><td class="num">20 dBm</td><td>да (CAD)</td><td>да</td><td class="num">3</td></tr>
+    <tr><td><code>s3_e22m33s</code></td><td>ESP32-S3</td><td>E22-400M33S (SX1268)</td><td>SPI</td><td class="num">433 МГц</td><td class="num">33 dBm</td><td>да</td><td>возможен, не обкатан</td><td class="num">4</td></tr>
+  </table></div>
+
+  <div class="note"><strong>Две подсети по построению.</strong> T3 живёт на 869.525 МГц
+  (тот же слот, что Meshtastic EU_868), E220-платы — на 433.125 МГц. Они физически
+  не слышат друг друга: это не баг, а следствие того, какие радиочипы стоят на платах.
+  Частота 869.525 выбрана не случайно — см. §10.4.</div>
+
+  <p>E220 — «чёрный ящик»: LoRa-модем спрятан за UART-прошивкой EBYTE, доступа к SF/BW
+  напрямую нет, только «air rate». SX1276/SX1268 — «голый» трансивер: прошивка сама
+  крутит регистры, поэтому умеет CAD, FSK-режим и произвольные пресеты. Чтобы 433-МГц
+  SX-плата слышала E220, пресеты SPI-радио подобраны под air-rate EBYTE
+  (<code>radio_sx127x.c:19</code>):</p>
+
+  <div class="tblwrap"><table>
+    <tr><th>Режим</th><th>E220 air rate</th><th>Эквивалент SX</th><th>Чувствительность RX</th></tr>
+    <tr><td>SLOW («дальнобой», по умолчанию)</td><td class="num">2.4 кбит/с</td><td class="num">SF9 · BW125 · CR4/5</td><td class="num">≈ −129 dBm</td></tr>
+    <tr><td>FAST</td><td class="num">19.2 кбит/с</td><td class="num">SF7 · BW250 · CR4/5</td><td class="num">≈ −120 dBm</td></tr>
+  </table></div>
+
+  <p>Общий PHY-клей: sync word <code>0x12</code> (private LoRa, как у EBYTE), преамбула 8 симв.,
+  CRC включён, explicit header (<code>config.h:37</code>, <code>sx1278.c:193</code>).</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="layers">
+  <h2><span class="sec">§3</span>Слои прошивки</h2>
+
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 430" role="img" aria-label="Слои прошивки от BLE до драйверов радио">
+      <!-- layer rows -->
+      <rect x="20" y="16" width="860" height="58" class="sv-box"/>
+      <text x="36" y="40" class="sv-tb">ble_server.c</text>
+      <text x="36" y="58" class="sv-ts">NimBLE · NUS GATT · очередь RX-команд · очередь notify с нарезкой по 180 Б</text>
+      <text x="860" y="40" text-anchor="end" class="sv-ta">телефон</text>
+
+      <rect x="20" y="90" width="860" height="76" class="sv-boxa"/>
+      <text x="36" y="114" class="sv-tb">bridge.c — мозг</text>
+      <text x="36" y="132" class="sv-ts">JSON-диспетчер команд · диспетчер типов пакетов · фрагментация/сборка · seq-маппинг ACK</text>
+      <text x="36" y="148" class="sv-ts">relay-планировщик с джиттером · голосовые буферы · blacklist · nodedb-обновления</text>
+
+      <rect x="20" y="182" width="420" height="58" class="sv-box"/>
+      <text x="36" y="206" class="sv-tb">proto25.c — кодек эфира</text>
+      <text x="36" y="224" class="sv-ts">build/parse · dedup-таблица · token-bucket rate limit</text>
+
+      <rect x="460" y="182" width="420" height="58" class="sv-box"/>
+      <text x="476" y="206" class="sv-tb">спутники</text>
+      <text x="476" y="224" class="sv-ts">nodedb · identity(NVS) · battery(ADC) · display · led · ptt</text>
+
+      <rect x="20" y="256" width="860" height="58" class="sv-box"/>
+      <text x="36" y="280" class="sv-tb">lora_manager.c — диспетчер радио</text>
+      <text x="36" y="298" class="sv-ts">TX-очередь(8) + LBT-ретраи · RX-поллинг · suspend/resume для PTT · смена скорости/мощности</text>
+
+      <rect x="20" y="330" width="860" height="42" class="sv-box"/>
+      <text x="36" y="356" class="sv-tb">radio_hal.h — const radio_ops_t: init · send · receive · set_speed · set_tx_power · channel_busy</text>
+
+      <rect x="20" y="388" width="272" height="34" class="sv-box"/>
+      <text x="156" y="410" text-anchor="middle" class="sv-t">radio_e220 → e220.c (UART)</text>
+      <rect x="312" y="388" width="272" height="34" class="sv-boxa"/>
+      <text x="448" y="410" text-anchor="middle" class="sv-t">radio_sx127x → sx1278.c (SPI+FSK)</text>
+      <rect x="604" y="388" width="276" height="34" class="sv-boxw"/>
+      <text x="742" y="410" text-anchor="middle" class="sv-t">radio_sx126x → sx126x.c (не обкатан)</text>
+    </svg>
+    </div>
+    <figcaption>Рис. 2 — Ровно одна реализация <code>radio_ops</code> компилируется в бинарник;
+    выбор делает заголовок платы через <code>BOARD_RADIO_*</code>.</figcaption>
+  </figure>
+
+  <dl class="kv">
+    <dt>bridge.c (1383 стр.)</dt><dd>Единственное место, где встречаются оба мира: BLE-JSON и эфирные пакеты. Все сценарии §7 проходят через него.</dd>
+    <dt>proto25.c</dt><dd>Чистый кодек без побочных эффектов (кроме счётчика packet_id и таблиц dedup/rate). Легко тестировать на хосте — но тестов пока нет.</dd>
+    <dt>protocol.c (legacy)</dt><dd>Старый 10-байтовый протокол v1. Живёт только ради heartbeat/discovery со старыми прошивками — кандидат на пенсию.</dd>
+    <dt>identity.c</dt><dd>node_id = байты 2–5 BT-MAC (<code>identity.c:32</code>) — уникален и стабилен без конфигурации. Имя юзера — в NVS.</dd>
+  </dl>
+</section>
+
+<!-- ============================================================ -->
+<section id="tasks">
+  <h2><span class="sec">§4</span>Задачи FreeRTOS и очереди</h2>
+  <p>Радиовремя — на ядре 0, BLE — на ядре 1. Это осознанно: NimBLE-хост капризен к
+  латентности, а SPI-транзакции радио защищены рекурсивным мьютексом
+  (<code>sx1278.c:24</code>), потому что в шину одновременно ломятся rx-поллер, tx и voice.</p>
+
+  <div class="tblwrap"><table>
+    <tr><th>Задача</th><th>Ядро</th><th>Prio</th><th>Стек</th><th>Что делает</th><th>Питается из</th></tr>
+    <tr><td><code>lora_tx</code></td><td class="num">0</td><td class="num">4</td><td class="num">4 КБ</td><td>LBT (до 6 попыток CAD с backoff 30–150 мс) → <code>radio_ops.send</code></td><td>tx_queue (8×256 Б)</td></tr>
+    <tr><td><code>lora_rx</code></td><td class="num">0</td><td class="num">3</td><td class="num">8 КБ</td><td>поллинг радио 500 мс → <code>bridge_on_lora_rx</code></td><td>эфир</td></tr>
+    <tr><td><code>bridge_tx</code></td><td class="num">0</td><td class="num">3</td><td class="num">8 КБ</td><td>режет текст на фрагменты ≤155 Б, паузы 300–500 мс между ними</td><td>tx_sem + tx_text_buf</td></tr>
+    <tr><td><code>relay</code></td><td class="num">0</td><td class="num">3</td><td class="num">4 КБ</td><td>тикает каждые 50 мс, стреляет созревшие relay-слоты</td><td>relay_slots[4]</td></tr>
+    <tr><td><code>voice_tx</code></td><td class="num">0</td><td class="num">3</td><td class="num">6 КБ</td><td>фрагментирует голосовой буфер (до 40 фрагм.), паузы 150–250 мс</td><td>voice_sem + voice_tx_buf</td></tr>
+    <tr><td><code>heartbeat</code></td><td class="num">0</td><td class="num">2</td><td class="num">4 КБ</td><td>legacy-ping каждые ~45 с ±20%, таймаут пира 120 с</td><td>таймер</td></tr>
+    <tr><td><code>ble_notify</code></td><td class="num">1</td><td class="num">5</td><td class="num">6 КБ</td><td>шлёт notify кусками по 180 Б (MTU−3), пауза 15 мс между кусками</td><td>notify_queue (8×2 КБ)</td></tr>
+    <tr><td><code>ble_rx</code></td><td class="num">1</td><td class="num">4</td><td class="num">8 КБ</td><td>исполняет JSON-команды вне контекста NimBLE (иначе deadlock, см. <code>ble_server.c:36</code>)</td><td>rx_queue (8×512 Б)</td></tr>
+    <tr><td><code>ptt</code></td><td class="num">1</td><td class="num">6</td><td class="num">6 КБ</td><td>FSK-движок звонка: RX→BLE, BLE→TX, keepalive 2 с, watchdog 30 с</td><td>tx_q (16×62 Б)</td></tr>
+    <tr><td><code>nimble_host</code></td><td class="num">1</td><td class="num">—</td><td class="num">—</td><td>стек BLE</td><td>—</td></tr>
+  </table></div>
+
+  <div class="note"><strong>Два исторических дедлока уже пойманы и задокументированы в коде:</strong>
+  (1) notify из GATT-колбэка → рекурсивный <code>ble_hs_lock()</code> → очередь + отдельная задача
+  (<code>ble_server.c:35</code>); (2) исполнение тяжёлых команд в задаче NimBLE → переполнение —
+  вынесено в <code>ble_rx</code> (<code>ble_server.c:27</code>). Не возвращайте это обратно.</div>
+
+  <p>Порядок инициализации в <code>main.c</code> тоже несёт смысл: NVS → identity → bridge →
+  peer_manager → BLE → <strong>LoRa последним</strong>, чтобы к моменту первого принятого
+  пакета все очереди и колбэки уже существовали.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="proto">
+  <h2><span class="sec">§5</span>Эфирный протокол proto25</h2>
+
+  <h3>5.1 Заголовок — 25 байт, little-endian, packed</h3>
+  <p>Каждый LoRa-кадр начинается с магии <code>0xEB25</code>. Максимальный кадр — 180 Б
+  (ограничение суб-пакета E220), значит полезной нагрузки — до 155 Б.</p>
+
+  <div class="diagram">
+  <div class="bytemap" role="img" aria-label="Байтовая карта заголовка proto25">
+    <div class="span2 bm-magic"><span class="off">0–1</span><span class="fname">magic</span> 0xEB25</div>
+    <div class="bm-magic"><span class="off">2</span><span class="fname">version</span> 0x01</div>
+    <div class="bm-magic"><span class="off">3</span><span class="fname">flags</span> битмаска</div>
+    <div class="span4 bm-id"><span class="off">4–7</span><span class="fname">src_node_id</span> из BT-MAC отправителя</div>
+    <div class="span4 bm-id"><span class="off">8–11</span><span class="fname">dst_node_id</span> FFFFFFFF=broadcast · FFFFFFFE=SOS-all</div>
+    <div class="span4 bm-id"><span class="off">12–15</span><span class="fname">group_id</span> 0 = личное/без группы</div>
+    <div class="span2 bm-route"><span class="off">16–17</span><span class="fname">packet_id</span> счётчик per-src</div>
+    <div class="bm-route"><span class="off">18</span><span class="fname">hop_limit</span> макс. 5</div>
+    <div class="bm-route"><span class="off">19</span><span class="fname">hop_count</span> пройдено</div>
+    <div><span class="off">20</span><span class="fname">pkt_type</span> 0x01–0x14</div>
+    <div><span class="off">21</span><span class="fname">prio</span> 0=SOS…3=hello</div>
+    <div class="bm-frag"><span class="off">22</span><span class="fname">frag_total</span></div>
+    <div class="bm-frag"><span class="off">23</span><span class="fname">frag_index</span></div>
+  </div>
+  <div class="bytemap" style="grid-template-columns:repeat(8,1fr);min-width:560px">
+    <div><span class="off">24</span><span class="fname">payload_len</span> 0–155</div>
+    <div class="span4" style="border-style:dashed"><span class="off">25…24+len</span><span class="fname">payload</span></div>
+    <div class="span3" style="grid-column:span 3;border:none;background:none"></div>
+  </div>
+  </div>
+  <figcaption style="font:12.5px/1.5 var(--mono);color:var(--muted);margin:8px 0 20px">
+  Рис. 3 — <code>pkt25_hdr_t</code> (<code>proto25.h:74</code>). Цвет верхней кромки: зелёный — идентификация кадра,
+  синий — адресация, оранжевый — маршрутизация/dedup, фиолетовый — фрагментация.</figcaption>
+
+  <h3>5.2 Типы пакетов</h3>
+  <div class="tblwrap"><table>
+    <tr><th>Код</th><th>Тип</th><th>Payload</th><th>Кто обрабатывает / примечание</th></tr>
+    <tr><td class="num">0x01</td><td><code>TEXT_MSG</code></td><td>UTF-8 текст, фрагментируется</td><td>сборка → BLE <code>evt:msg</code>, авто-ACK</td></tr>
+    <tr><td class="num">0x02</td><td><code>TEXT_ACK</code></td><td>пусто</td><td>ACK и для текста, и для голоса</td></tr>
+    <tr><td class="num">0x03</td><td><code>READ_RECEIPT</code></td><td>—</td><td>объявлен, <strong>не реализован</strong></td></tr>
+    <tr><td class="num">0x04</td><td><code>GPS_BEACON</code></td><td><code>gps25_t</code> 16 Б</td><td>→ nodedb + BLE как <code>[LOC:lat,lon]</code></td></tr>
+    <tr><td class="num">0x05</td><td><code>NODE_HELLO</code></td><td><code>[0x00][hw_id][batt][имя]</code></td><td>анонс; на broadcast отвечаем unicast-hello</td></tr>
+    <tr><td class="num">0x06</td><td><code>NODE_BYE</code></td><td>—</td><td>объявлен, <strong>не реализован</strong></td></tr>
+    <tr><td class="num">0x07</td><td><code>SOS</code></td><td>текст</td><td>обходит blacklist и rate-limit, шлётся 3× на SLOW</td></tr>
+    <tr><td class="num">0x08–0x0B</td><td><code>SOS_ACK, PANIC, CHAN_SWITCH(+ACK)</code></td><td>—</td><td>PANIC принимается (сирена на телефоне); CHAN_SWITCH <strong>не обрабатывается</strong></td></tr>
+    <tr><td class="num">0x0C–0x0E</td><td><code>GROUP_JOIN/LEAVE/INFO</code></td><td><code>group25_info_t</code> 29 Б</td><td>приглашение/выход из группы; INFO не реализован</td></tr>
+    <tr><td class="num">0x0F</td><td><code>QUICK_PHRASE</code></td><td>1 байт (0x01–0x0A)</td><td>«Да», «Нет», «Бежим!»… — весь смысл в 1 байте</td></tr>
+    <tr><td class="num">0x10/0x11</td><td><code>PING/PONG</code></td><td>пусто</td><td>эхо для замера линка</td></tr>
+    <tr><td class="num">0x12</td><td><code>VOICE_MSG</code></td><td>AMR-NB, до 40 фрагм.</td><td>сборка по маске uint64 → BLE b64-чанками</td></tr>
+    <tr><td class="num">0x13/0x14</td><td><code>PTT_START/END</code></td><td><code>[mode][имя]</code></td><td>захват канала под FSK-звонок, hop_limit=0 (не ретранслируется)</td></tr>
+  </table></div>
+
+  <h3>5.3 Флаги</h3>
+  <div class="tblwrap"><table>
+    <tr><th>Бит</th><th>Флаг</th><th>Состояние</th></tr>
+    <tr><td class="num">0</td><td><code>ENCRYPTED</code></td><td><strong>зарезервирован, шифрования в эфире нет</strong> — весь трафик открытый</td></tr>
+    <tr><td class="num">1</td><td><code>RELAY</code></td><td>ставится ретранслятором</td></tr>
+    <tr><td class="num">2</td><td><code>GROUP</code></td><td>group_id валиден</td></tr>
+    <tr><td class="num">3</td><td><code>FRAG_MORE</code></td><td>объявлен; фактически сборка идёт по frag_total/index</td></tr>
+    <tr><td class="num">4</td><td><code>ACK_REQ</code></td><td>просьба подтвердить доставку</td></tr>
+    <tr><td class="num">5</td><td><code>SOS_OVERRIDE</code></td><td>обходит blacklist и rate-limit</td></tr>
+    <tr><td class="num">6</td><td><code>COMPRESSED</code></td><td>зарезервирован</td></tr>
+  </table></div>
+
+  <h3>5.4 Фрагментация</h3>
+  <p>Текст режется на куски по 155 Б: <code>frag_total</code>/<code>frag_index</code> в заголовке,
+  сборка на приёме — по битовой маске (<code>uint8_t</code> для текста → максимум 8 фрагментов ≈ 1240 Б;
+  <code>uint64_t</code> для голоса → до 40 фрагментов ≈ 6 КБ). Сессия сборки <em>одна</em> —
+  чужой фрагмент между делом сбрасывает её (§12). Таймауты: 8 с текст, 60 с голос.</p>
+
+  <h3>5.5 NODE_HELLO v2 — как узлы узнают друг о друге</h3>
+  <pre><code>payload: [0x00][hw_id][batt%][имя UTF-8…]
+          └─ маркер v2: первый байт имени не может быть 0x00,
+             поэтому легаси-hello (только имя) остаётся парсибельным</code></pre>
+  <p>Hello летит: при старте, при смене имени, по команде <code>discover</code>, и в ответ
+  на чужой broadcast-hello (unicast, hop_limit=1). На unicast-hello не отвечаем — иначе
+  два узла зациклятся в вечный пинг-понг (<code>bridge.c:712</code>).</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="anticol">
+  <h2><span class="sec">§6</span>Анти-коллизионная механика</h2>
+  <p>В эфире нет арбитра. Четыре механизма не дают сети сожрать саму себя:</p>
+
+  <h3>6.1 Dedup — прививка от relay-шторма</h3>
+  <p>Кольцевая таблица на 64 пары <code>(src_node_id, packet_id)</code> с TTL 60 с
+  (<code>proto25.c:150</code>). Уже виденный пакет не ретранслируется и не отдаётся в BLE повторно.
+  Без этого пакет с hop_limit=5 в сети из N узлов размножался бы экспоненциально.</p>
+
+  <h3>6.2 Relay-джиттер с отменой по эху</h3>
+  <p>Мгновенная ретрансляция = гарантированная коллизия: все, кто услышал пакет, ответили бы
+  одновременно. Поэтому relay уходит через случайные 50–500 мс, и — ключевой трюк — если за это
+  время мы <em>услышали чужой relay того же пакета</em>, свой отменяем (<code>bridge.c:358–410</code>).
+  Эфир сам выбирает одного ретранслятора; физика, которая делает это возможным — capture effect (§10.2).</p>
+
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 210" role="img" aria-label="Таймлайн relay-джиттера трёх узлов">
+      <text x="20" y="24" class="sv-tb">t=0: узел A вещает пакет P. Узлы B, C, D слышат его.</text>
+      <!-- axis -->
+      <line x1="150" y1="180" x2="880" y2="180" class="sv-l"/>
+      <text x="150" y="198" class="sv-ts">0 мс</text>
+      <text x="420" y="198" class="sv-ts">~200 мс</text>
+      <text x="700" y="198" class="sv-ts">~450 мс</text>
+      <!-- B -->
+      <text x="30" y="70" class="sv-t">B: джиттер 120 мс</text>
+      <line x1="150" y1="65" x2="330" y2="65" class="sv-ld"/>
+      <rect x="330" y="52" width="120" height="26" class="sv-boxa"/>
+      <text x="390" y="69" text-anchor="middle" class="sv-ta">RELAY P ✓</text>
+      <!-- C -->
+      <text x="30" y="115" class="sv-t">C: джиттер 300 мс</text>
+      <line x1="150" y1="110" x2="480" y2="110" class="sv-ld"/>
+      <rect x="480" y="97" width="150" height="26" class="sv-boxw"/>
+      <text x="555" y="114" text-anchor="middle" class="sv-tw">ОТМЕНА (слышал B)</text>
+      <!-- D -->
+      <text x="30" y="160" class="sv-t">D: джиттер 430 мс</text>
+      <line x1="150" y1="155" x2="610" y2="155" class="sv-ld"/>
+      <rect x="610" y="142" width="150" height="26" class="sv-boxw"/>
+      <text x="685" y="159" text-anchor="middle" class="sv-tw">ОТМЕНА (слышал B)</text>
+      <!-- echo arrows -->
+      <line x1="452" y1="65" x2="478" y2="103" class="sv-la"/>
+      <line x1="452" y1="65" x2="608" y2="148" class="sv-la"/>
+    </svg>
+    </div>
+    <figcaption>Рис. 4 — Побеждает узел с минимальным джиттером; остальные слышат его эхо
+    (дубликат по dedup) и снимают свои слоты. Один пакет — одна ретрансляция вместо трёх.</figcaption>
+  </figure>
+
+  <h3>6.3 Token bucket rate-limit</h3>
+  <p>На каждого отправителя — ведро на 6 токенов, пополнение 1 токен/с
+  (<code>proto25.c:174</code>, V2.7.2). Лимитируются только «спамогенные» типы
+  (TEXT, GPS, QUICK_PHRASE, VOICE) и <em>только фрагмент 0</em> — старый жёсткий лимит
+  «1 пакет / 1.5 с» убивал хвосты голосовых, у которых фрагменты летят чаще (<code>bridge.c:554</code>).</p>
+
+  <h3>6.4 LBT / CAD перед передачей</h3>
+  <p>Только SPI-радио: перед TX до 6 раз проверяем канал через CAD (детекция чужой LoRa-преамбулы
+  корреляцией — надёжнее замера RSSI), при занятости — случайный backoff 30–150 мс, после 6 неудач
+  шлём как есть (fail-open, <code>lora_manager.c:38</code>). E220 канал слушать не умеет —
+  он чистая ALOHA (§11.2).</p>
+
+  <p>Плюс рандомизация всего периодического: межфрагментные паузы 300–500 мс (текст) /
+  150–250 мс (голос), heartbeat ±20%, стартовая задержка discovery.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="flows">
+  <h2><span class="sec">§7</span>Сценарии: как летит каждый пакет</h2>
+
+  <h3>7.1 Текстовое сообщение (с ACK)</h3>
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 400" role="img" aria-label="Последовательность отправки текста">
+      <!-- lifelines -->
+      <text x="90" y="24" text-anchor="middle" class="sv-tb">Телефон A</text>
+      <text x="300" y="24" text-anchor="middle" class="sv-tb">ESP A</text>
+      <text x="560" y="24" text-anchor="middle" class="sv-tb">ESP B</text>
+      <text x="790" y="24" text-anchor="middle" class="sv-tb">Телефон B</text>
+      <line x1="90" y1="34" x2="90" y2="380" class="sv-life"/>
+      <line x1="300" y1="34" x2="300" y2="380" class="sv-life"/>
+      <line x1="560" y1="34" x2="560" y2="380" class="sv-life"/>
+      <line x1="790" y1="34" x2="790" y2="380" class="sv-life"/>
+      <!-- msgs -->
+      <line x1="90" y1="60" x2="300" y2="60" class="sv-la"/>
+      <text x="195" y="52" text-anchor="middle" class="sv-ts">{"cmd":"send","seq":42,"text":"…"} — GATT write</text>
+      <text x="310" y="86" class="sv-ts">ble_rx → bridge_tx_task: нарезка на N фрагм. ≤155 Б</text>
+      <line x1="300" y1="110" x2="560" y2="110" class="sv-lw"/>
+      <text x="430" y="102" text-anchor="middle" class="sv-ts">TEXT_MSG frag 0/N · LBT → эфир (~0.6–0.9 c на SLOW)</text>
+      <text x="310" y="134" class="sv-ts">пауза 300–500 мс (рандом)</text>
+      <line x1="300" y1="155" x2="560" y2="155" class="sv-lw"/>
+      <text x="430" y="147" text-anchor="middle" class="sv-ts">TEXT_MSG frag 1/N …</text>
+      <line x1="90" y1="185" x2="300" y2="185" class="sv-la" stroke-dasharray="5 3"/>
+      <text x="195" y="177" text-anchor="middle" class="sv-ts">{"evt":"sent","seq":42} — фрагменты ушли</text>
+      <text x="570" y="210" class="sv-ts">dedup → nodedb → сборка по маске → полный текст</text>
+      <line x1="560" y1="235" x2="790" y2="235" class="sv-la"/>
+      <text x="675" y="227" text-anchor="middle" class="sv-ts">{"evt":"msg","seq":…,"rssi":-97,"hops":0,"text":"…"}</text>
+      <line x1="560" y1="270" x2="300" y2="270" class="sv-lw"/>
+      <text x="430" y="262" text-anchor="middle" class="sv-ts">TEXT_ACK (25 Б, hop_limit=1)</text>
+      <line x1="300" y1="300" x2="90" y2="300" class="sv-la"/>
+      <text x="195" y="292" text-anchor="middle" class="sv-ts">{"evt":"ack","seq":…} — двойная галочка</text>
+      <text x="450" y="345" text-anchor="middle" class="sv-t">Параллельно: узлы C, D слышат фрагменты → relay-джиттер (§6.2), hop_count++</text>
+      <text x="450" y="368" text-anchor="middle" class="sv-ts">Повторных передач при отсутствии ACK прошивка НЕ делает — ретраи на совести приложения</text>
+    </svg>
+    </div>
+    <figcaption>Рис. 5 — Текст: BLE → фрагментация → эфир → сборка → ACK. Обратите
+    внимание: dst всегда NODE_BROADCAST — «личность» сообщения определяет телефон.</figcaption>
+  </figure>
+
+  <h3>7.2 Голосовое сообщение (V2.6)</h3>
+  <ol>
+    <li>Телефон пишет AMR-NB 4.75 кбит/с ≤8 с (≈4.8 КБ) и шлёт base64-чанками:
+    <code>{"cmd":"voice_tx","seq":N,"idx":i,"total":t,"data":"…"}</code>. ESP копит буфер 6 КБ.</li>
+    <li>Когда пришли все чанки — <code>voice_tx_task</code> фрагментирует в ~31×<code>VOICE_MSG</code>
+    (155 Б каждый), паузы 150–250 мс.</li>
+    <li>Приёмник собирает по маске uint64; полный буфер → ACK отправителю → телефону B
+    b64-чанками по 225 сырых байт: <code>{"evt":"voice","idx":i,"total":t,"data":"…"}</code>
+    с паузой 60 мс, чтобы notify-очередь дышала.</li>
+  </ol>
+  <div class="warnbox"><strong>Цена в airtime:</strong> одно 8-секундное голосовое на SLOW ≈
+  25–35 секунд полной оккупации канала (§9.2). Потеря одного фрагмента = потеря всего сообщения:
+  переспроса отдельных фрагментов нет (§11.6).</div>
+
+  <h3>7.3 SOS</h3>
+  <p><code>{"cmd":"sos"}</code> → прошивка принудительно падает на SLOW (максимальная дальность),
+  шлёт <code>SOS</code> 3 раза с паузой 1 с, dst=<code>0xFFFFFFFE</code> (SOS_ALL) +
+  флаг <code>SOS_OVERRIDE</code> — получатели игнорируют blacklist и rate-limit, ретранслируют
+  с hop_limit=5, телефон получателя получает <code>evt:sos_in</code> (модалка + сирена) и дубль
+  в чат. Потом SF возвращается. <code>PANIC</code> — то же, но цель — заставить конкретный телефон орать.</p>
+
+  <h3>7.4 PTT-звонок (V2.7/2.8, только SX127x)</h3>
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 330" role="img" aria-label="Последовательность PTT-звонка">
+      <text x="120" y="24" text-anchor="middle" class="sv-tb">ESP A (звонящий)</text>
+      <text x="640" y="24" text-anchor="middle" class="sv-tb">ESP B</text>
+      <line x1="120" y1="34" x2="120" y2="310" class="sv-life"/>
+      <line x1="640" y1="34" x2="640" y2="310" class="sv-life"/>
+      <text x="130" y="56" class="sv-ts">lora_manager_suspend() — радио забирается у очередей</text>
+      <line x1="120" y1="80" x2="640" y2="80" class="sv-lw"/>
+      <text x="380" y="72" text-anchor="middle" class="sv-ts">PTT_START ×2 [mode][имя] — ещё LoRa, hop_limit=0, prio=SOS</text>
+      <text x="650" y="104" class="sv-ts">evt:ptt_incoming → телефон;</text>
+      <text x="650" y="119" class="sv-ts">suspend + fsk_enter(mode)</text>
+      <text x="130" y="119" class="sv-ts">fsk_enter(mode): LoRa-sleep → FSK-sleep → RX</text>
+      <rect x="240" y="140" width="420" height="30" class="sv-boxa"/>
+      <text x="450" y="160" text-anchor="middle" class="sv-ta">GFSK-сессия: кадры [A1][seq][AMR ≤57Б], keepalive A3 каждые 2 c</text>
+      <line x1="120" y1="200" x2="640" y2="200" class="sv-la"/>
+      <line x1="640" y1="220" x2="120" y2="220" class="sv-la"/>
+      <text x="380" y="192" text-anchor="middle" class="sv-ts">полудуплекс: телефон→BLE→FSK→BLE→телефон, задержка ~0.3–0.5 с</text>
+      <line x1="120" y1="255" x2="640" y2="255" class="sv-lw"/>
+      <text x="380" y="247" text-anchor="middle" class="sv-ts">END-маркер [A2] ×3 по FSK + дубль PKT25_PTT_END по LoRa после реконфига</text>
+      <text x="130" y="285" class="sv-ts">fsk_exit → полный LoRa-реконфиг → resume</text>
+      <text x="650" y="285" class="sv-ts">watchdog 30 с без RX — авто-выход</text>
+    </svg>
+    </div>
+    <figcaption>Рис. 6 — Звонок целиком захватывает радио: LoRa-сеть для этих двух узлов
+    на время сессии не существует. Профили FSK: 0 «Дальнобой» 2.4к / 1 «Стандарт» 19.2к / 2 «HD» 50к.</figcaption>
+  </figure>
+
+  <h3>7.5 Ретрансляция чужого пакета (узел-посредник)</h3>
+  <pre><code>bridge_on_lora_rx():
+  1. от себя?            → drop (эхо собственного relay)
+  2. blacklist? (не SOS) → drop
+  3. rate-limit? (frag 0 спамогенных типов, не SOS) → drop
+  4. nodedb_update_signal(src, rssi, snr, hops)
+  5. dedup_seen?
+       нет → dedup_add; если hop_count &lt; hop_limit и dst ≠ мы:
+             копия с hop_count+1 и FLAG_RELAY → relay_schedule(джиттер 50–500 мс)
+       да  → relay_cancel_if_pending (кто-то уже донёс)
+  6. dst ∈ {мы, BROADCAST, SOS_ALL}? нет → return (мы просто ретранслятор)
+  7. switch(pkt_type) → обработка + BLE-события</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<section id="ble">
+  <h2><span class="sec">§8</span>BLE-интерфейс (JSON API)</h2>
+  <p>Nordic UART Service (<code>6E400001-…</code>): характеристика RX — write (команды),
+  TX — notify (события). MTU 256; длинные события режутся на куски по 180 Б, приложение
+  склеивает по балансу фигурных скобок. Очередь notify — 8×2 КБ, при переполнении события
+  <strong>молча дропаются</strong> (<code>ble_server.c:278</code>). JSON-парсер — самодельный
+  <code>strstr</code>-поиск ключей (<code>bridge.c:74</code>), не полноценный парсер.</p>
+
+  <h3>Команды (телефон → устройство)</h3>
+  <div class="tblwrap"><table>
+    <tr><th>cmd</th><th>Аргументы</th><th>Действие / ответ</th></tr>
+    <tr><td><code>send</code></td><td>seq, text, [group_id]</td><td>текст в эфир → <code>sent</code>/<code>error</code>, позже <code>ack</code></td></tr>
+    <tr><td><code>voice_tx</code></td><td>seq, idx, total, data(b64)</td><td>чанк голосового → после последнего TX → <code>voice_sent</code></td></tr>
+    <tr><td><code>sos</code></td><td>—</td><td>SOS ×3 на SLOW → <code>sos_sent</code></td></tr>
+    <tr><td><code>ptt_start / ptt_stop / ptt_audio</code></td><td>[mode 0–2] / — / d(b64)</td><td>FSK-звонок; только SX127x</td></tr>
+    <tr><td><code>discover</code></td><td>—</td><td>NODE_HELLO broadcast + legacy discovery</td></tr>
+    <tr><td><code>setname</code></td><td>name</td><td>NVS + hello с новым именем → <code>name_set</code></td></tr>
+    <tr><td><code>speed</code></td><td>mode: fast|slow</td><td>смена air-rate/SF → <code>speed</code></td></tr>
+    <tr><td><code>set_tx_power</code></td><td>idx 0–3</td><td>30/27/24/21 dBm (E220) или max−3·idx (SX) → <code>tx_power</code></td></tr>
+    <tr><td><code>groupjoin / groupleave</code></td><td>node_id, group_id, name</td><td>приглашение в группу / выход</td></tr>
+    <tr><td><code>blocknode / unblocknode</code></td><td>node_id</td><td>blacklist в NVS → <code>blocked</code>/<code>unblocked</code></td></tr>
+    <tr><td><code>status / diag / nodes / get_radio</code></td><td>—</td><td>телеметрия: <code>hw</code> / <code>diag</code> / <code>nodes</code> / <code>radio</code></td></tr>
+    <tr><td><code>set_antenna</code></td><td>type</td><td>метка в NVS для компенсации RSSI в статистике</td></tr>
+    <tr><td><code>ble_test</code></td><td>—</td><td><code>ble_pong</code></td></tr>
+  </table></div>
+
+  <h3>События (устройство → телефон)</h3>
+  <div class="tblwrap"><table>
+    <tr><th>evt</th><th>Поля</th><th>Когда</th></tr>
+    <tr><td><code>msg</code></td><td>seq, rssi, node_id, group_id, hops, text</td><td>собранный текст / quick-phrase / GPS как [LOC:…]</td></tr>
+    <tr><td><code>ack / sent / error</code></td><td>seq (+code, desc)</td><td>жизненный цикл отправки</td></tr>
+    <tr><td><code>voice / voice_sent</code></td><td>node_id, seq, idx, total, data</td><td>голосовые</td></tr>
+    <tr><td><code>node_seen / peer / nodes</code></td><td>node_id, name, rssi, hops, hw, batt</td><td>обнаружение и список узлов</td></tr>
+    <tr><td><code>sos_in / sos_sent / panic</code></td><td>node_id, text, rssi</td><td>тревога</td></tr>
+    <tr><td><code>ptt_incoming / ptt_state / ptt_audio</code></td><td>name, mode / state / d</td><td>звонки</td></tr>
+    <tr><td><code>group_joined / group_left</code></td><td>group_id, name, from</td><td>группы</td></tr>
+    <tr><td><code>hw / diag / speed / radio / tx_power / antenna_set / name_set / blocked / unblocked / ble_pong</code></td><td>—</td><td>сервисные ответы</td></tr>
+  </table></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="physics">
+  <h2><span class="sec">§9</span>Физика: бюджет линка и airtime</h2>
+
+  <h3>9.1 Бюджет линка — сколько дБ у нас в кармане</h3>
+  <p>Дальность решает одна разность: <code>P_tx + усиления − чувствительность RX ≥ потери тракта</code>.
+  LoRa покупает чувствительность за счёт времени: каждый шаг SF — это ×2 длительность символа
+  и ≈ +2.5 дБ бюджета.</p>
+
+  <div class="tblwrap"><table>
+    <tr><th>Конфигурация</th><th>TX</th><th>Чувств. RX</th><th>Бюджет</th><th>Декод ниже шума на</th></tr>
+    <tr><td>E220 · SLOW (≈SF9/125)</td><td class="num">+30 dBm</td><td class="num">−129 dBm</td><td class="num"><strong>159 дБ</strong></td><td class="num">−12.5 дБ SNR</td></tr>
+    <tr><td>E220 · FAST (≈SF7/250)</td><td class="num">+30 dBm</td><td class="num">−120 dBm</td><td class="num">150 дБ</td><td class="num">−7.5 дБ SNR</td></tr>
+    <tr><td>T3/SX1276 · SLOW SF9/125</td><td class="num">+20 dBm</td><td class="num">−129 dBm</td><td class="num">149 дБ</td><td class="num">−12.5 дБ</td></tr>
+    <tr><td>T3 · FAST SF7/250</td><td class="num">+20 dBm</td><td class="num">−120 dBm</td><td class="num">140 дБ</td><td class="num">−7.5 дБ</td></tr>
+    <tr><td>PTT FSK «Стандарт» 19.2к</td><td class="num">+20 dBm</td><td class="num">≈ −110 dBm</td><td class="num">130 дБ</td><td class="num">нужен SNR &gt; +8 дБ</td></tr>
+    <tr><td>PTT FSK «Дальнобой» 2.4к</td><td class="num">+20 dBm</td><td class="num">≈ −118 dBm</td><td class="num">138 дБ</td><td class="num">—</td></tr>
+  </table></div>
+
+  <p>Что это значит на земле (двухлучевая модель, антенны на высоте 1.5 м, см. §11.3):
+  E220 на SLOW имеет запас на ≈10 км по ровному полю; тот же линк на FSK 19.2к — на
+  29 дБ меньше бюджета, т.е. дальность падает примерно в 5–8 раз. Отсюда «2 км боевой»
+  для PTT против «десятков км» для сообщений.</p>
+
+  <h3>9.2 Airtime — сколько эфира съедает каждый пакет</h3>
+  <p>Формула Semtech для SF9/BW125 (Tsym = 4.096 мс, преамбула 12.25 симв., CR4/5, CRC):</p>
+
+  <div class="tblwrap"><table>
+    <tr><th>Пакет</th><th>E220 SLOW 2.4к*</th><th>E220 FAST 19.2к*</th><th>SX1276 SF9/125</th><th>SX1276 SF7/250</th></tr>
+    <tr><td>ACK / PING (25 Б, только заголовок)</td><td class="num">~85 мс</td><td class="num">~11 мс</td><td class="num">206 мс</td><td class="num">31 мс</td></tr>
+    <tr><td>HELLO (~40 Б)</td><td class="num">~135 мс</td><td class="num">~17 мс</td><td class="num">288 мс</td><td class="num">39 мс</td></tr>
+    <tr><td>Полный фрагмент (180 Б)</td><td class="num">~600 мс</td><td class="num">~75 мс</td><td class="num">923 мс</td><td class="num">144 мс</td></tr>
+    <tr><td>Текст 400 Б (3 фрагм. + паузы)</td><td class="num">~2.5 с</td><td class="num">~1.0 с</td><td class="num">~3.4 с</td><td class="num">~1.2 с</td></tr>
+    <tr><td><strong>Голосовое 4.8 КБ (31 фрагм. + паузы)</strong></td><td class="num"><strong>~24 с</strong></td><td class="num">~8 с</td><td class="num"><strong>~34 с</strong></td><td class="num">~10 с</td></tr>
+  </table></div>
+  <p style="font-size:13px;color:var(--muted)">* E220 прячет модуляцию — оценка по битрейту;
+  реальные цифры чуть выше из-за преамбулы и служебки модема.</p>
+
+  <figure>
+    <div class="diagram">
+    <svg viewBox="0 0 900 190" role="img" aria-label="Сравнение airtime пакетов на SLOW">
+      <text x="20" y="20" class="sv-tb">Оккупация канала на SLOW (SF9/125), в масштабе:</text>
+      <text x="20" y="52" class="sv-t">ACK</text>
+      <rect x="150" y="40" width="5" height="16" class="bar"/>
+      <text x="165" y="53" class="sv-ts">0.21 c</text>
+      <text x="20" y="82" class="sv-t">HELLO</text>
+      <rect x="150" y="70" width="7" height="16" class="bar"/>
+      <text x="167" y="83" class="sv-ts">0.29 c</text>
+      <text x="20" y="112" class="sv-t">фрагмент 180 Б</text>
+      <rect x="150" y="100" width="23" height="16" class="bar"/>
+      <text x="183" y="113" class="sv-ts">0.92 c</text>
+      <text x="20" y="142" class="sv-t">текст 3 фрагм.</text>
+      <rect x="150" y="130" width="85" height="16" class="bar"/>
+      <text x="245" y="143" class="sv-ts">3.4 c</text>
+      <text x="20" y="172" class="sv-t">голосовое 8 c</text>
+      <rect x="150" y="160" width="720" height="16" class="barw"/>
+      <text x="700" y="155" class="sv-tw">34 c — канал мёртв для всех</text>
+    </svg>
+    </div>
+    <figcaption>Рис. 7 — Одно голосовое на SLOW стоит как ~160 ACK-ов. Пока оно летит,
+    вся подсеть молчит (или коллизится).</figcaption>
+  </figure>
+
+  <div class="note"><strong>Вывод, который стоит закодировать:</strong> голосовые почти всегда
+  выгоднее слать на FAST — 8 с вместо 24–34 с оккупации, а дальность голосу нужна редко
+  (обычно это «рядом, но за складом»). Автопереключение SF на время голосового — кандидат №1 в roadmap.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="pro">
+  <h2><span class="sec">§10</span>Физика ЗА нас — 6 сценариев</h2>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.1 Приём ниже уровня шума — processing gain CSS</h4>
+    <p>LoRa — chirp spread spectrum: каждый символ размазан по всей полосе линейным чирпом.
+    Приёмник коррелирует с опорным чирпом, и энергия символа «собирается» из шума.
+    На SF9 пакет декодируется при SNR −12.5 дБ — сигнал в 18 раз слабее шума по мощности,
+    на спектроанализаторе его <em>не видно</em>, а текст приходит.</p>
+    <p><strong>В нашем стеке:</strong> это весь режим SLOW. Сценарий: узлы на 8 км, RSSI −127 dBm,
+    шумовой пол −117 dBm — FAST (SF7, нужно ≥ −7.5 дБ SNR) мёртв полностью, SLOW тащит.
+    Именно поэтому <code>sos</code> принудительно падает на SLOW перед передачей (<code>bridge.c:1196</code>).</p>
+  </div>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.2 Capture effect — эфир сам выбирает победителя</h4>
+    <p>При коллизии двух LoRa-пакетов одного SF приёмник успешно декодирует более сильный,
+    если он громче примерно на 6 дБ — синхронизация захватывает мощный чирп, слабый уходит в шум.
+    6 дБ — это всего лишь ×2 разницы в расстоянии.</p>
+    <p><strong>В нашем стеке:</strong> relay-джиттер (§6.2) опирается на это дважды. Во-первых,
+    даже если два ретранслятора всё же совпали по времени, ближний к получателю, скорее всего,
+    «захватит» его приёмник — пакет доедет. Во-вторых, отмена по эху работает потому, что
+    отменяющий узел слышит чужой relay чисто, а не кашу: победитель по джиттеру почти всегда
+    единоличный владелец эфира в своём радиусе.</p>
+  </div>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.3 433 МГц огибает то, обо что 868 разбивается</h4>
+    <p>Длина волны на 433 МГц — 69 см против 34.5 см на 869. Дифракция на препятствии работает
+    тем лучше, чем соизмеримее волна с препятствием: 433 заметно лучше заворачивает за угол дома,
+    холм, просачивается сквозь листву (затухание в кроне ~0.1–0.2 дБ/м против ~0.3 на 868)
+    и через стены.</p>
+    <p><strong>В нашем стеке:</strong> подсеть E220 (433) — «лесная/городская NLOS», подсеть
+    T3 (869) — скорее «прямая видимость + высота». Одинаковый RSSI-порог у них означает разную
+    реальную топологию: не удивляйтесь, что T3-линк резче «падает со скалы» при потере LOS.</p>
+  </div>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.4 869.525 МГц — легальный буст мощности и duty cycle</h4>
+    <p>Полоса 869.4–869.65 МГц в EU-регуляторике (SRD-860) — особая: разрешено 500 мВт ERP
+    и 10% duty cycle, против 25 мВт / 1% в соседних кусках диапазона 868. Выбор
+    <code>BOARD_LORA_FREQ_HZ = 869525000</code> (<code>board_t3_v161.h:10</code>) — это +13 дБ
+    легального потолка и ×10 больше разрешённого эфирного времени. Тот же слот использует
+    Meshtastic EU_868 — и это осознанный компромисс: см. §11.8.</p>
+  </div>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.5 Высота антенны — самые дешёвые дБ</h4>
+    <p>Над плоской землёй работает двухлучевая модель: прямой луч + отражённый от земли.
+    После точки излома потери растут как 40·log(d), но зато usable-сигнал растёт на ~6 дБ
+    с каждым удвоением высоты <em>любой</em> из антенн. Поднять устройство с 1.5 м на 6 м
+    (палка, дерево, крыша) = +12 дБ = эквивалент ×16 мощности — больше, чем разница между
+    21 и 30 dBm в <code>set_tx_power</code>.</p>
+    <p><strong>В нашем стеке:</strong> hop через узел на возвышенности часто лучше прямого линка.
+    Меш это использует автоматически: узел на холме слышит обоих, его relay с джиттером
+    выигрывает, hops=1 доставляет то, что hops=0 не могло.</p>
+  </div>
+
+  <div class="phys pro">
+    <h4><span class="tag">за нас</span>10.6 Ночь, холод и инверсия — эфир «открывается»</h4>
+    <p>Вечером и ночью приземный слой атмосферы остывает, возникают температурные инверсии —
+    показатель преломления воздуха меняется с высотой, и радиогоризонт «отодвигается»
+    (тропосферное сверхрефракционное распространение). На УКВ это даёт часы, когда линк,
+    днём висевший на пороге, вдруг получает +5–10 дБ. Плюс ночью тише индустриальный шум.</p>
+    <p><strong>В нашем стеке:</strong> если далёкий узел появляется в <code>nodes</code> только
+    по ночам — это не глюк nodedb, это физика. Для стационарных линков на пределе имеет смысл
+    гонять тяжёлое (голосовые) ночью.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="con">
+  <h2><span class="sec">§11</span>Физика ПРОТИВ нас — 8 сценариев</h2>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.1 Дальность покупается временем — и время убивает пропускную способность</h4>
+    <p>Тот же processing gain, что даёт −12.5 дБ SNR, растягивает пакет: 180 Б на SF9 —
+    почти секунда эфира. Окно коллизии двух несинхронизированных передач = сумма их длительностей:
+    для двух «толстых» пакетов это ~2 секунды взаимной уязвимости. Чистая ALOHA (а E220 — она,
+    LBT нет) выходит на максимум пропускной способности при загрузке канала всего 18.4% —
+    дальше рост трафика <em>уменьшает</em> количество доставленного.</p>
+    <p><strong>Сценарий:</strong> 5 узлов на SLOW, у всех «пятничный чат»: каждые несколько секунд
+    текст + ACK + relay. Канал занят на треть, половина фрагментов бьётся, tx_queue (8 слотов)
+    переполняется, в логах «TX queue full». Лечится: FAST при хорошем RSSI, меньше broadcast-болтовни.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.2 Скрытый узел — LBT слушает не там, где коллизия</h4>
+    <figure>
+      <div class="diagram">
+      <svg viewBox="0 0 900 170" role="img" aria-label="Проблема скрытого узла">
+        <circle cx="150" cy="85" r="34" class="sv-boxa"/>
+        <text x="150" y="90" text-anchor="middle" class="sv-tb">A</text>
+        <circle cx="450" cy="85" r="34" class="sv-box"/>
+        <text x="450" y="90" text-anchor="middle" class="sv-tb">B</text>
+        <circle cx="750" cy="85" r="34" class="sv-boxa"/>
+        <text x="750" y="90" text-anchor="middle" class="sv-tb">C</text>
+        <line x1="184" y1="85" x2="416" y2="85" class="sv-la"/>
+        <line x1="484" y1="85" x2="716" y2="85" class="sv-la"/>
+        <path d="M 220 40 Q 450 -15 680 40" class="sv-lw" stroke-dasharray="6 4"/>
+        <text x="450" y="18" text-anchor="middle" class="sv-tw">A и C друг друга НЕ слышат</text>
+        <text x="450" y="150" text-anchor="middle" class="sv-ts">CAD у A и C показывает «чисто» — оба передают — у B каша из двух пакетов</text>
+      </svg>
+      </div>
+    </figure>
+    <p>CAD/LBT (<code>lora_manager.c:38</code>) проверяет эфир <em>у передатчика</em>, а коллизия
+    случается <em>у приёмника</em>. Узлы на краях зоны покрытия B взаимно скрыты — и их пакеты
+    гибнут именно у B, самого важного узла-ретранслятора.</p>
+    <p><strong>Что смягчает у нас:</strong> capture effect (§10.2) — если A ближе к B, его пакет
+    выживет; рандомные паузы между фрагментами снижают вероятность повторной коллизии тех же двух
+    узлов. Что добавило бы науки: ACK-driven ретраи с экспоненциальным backoff.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.3 Френель у земли: «прямая видимость» — это не линия, а эллипс</h4>
+    <figure>
+      <div class="diagram">
+      <svg viewBox="0 0 900 200" role="img" aria-label="Зона Френеля над землёй">
+        <line x1="40" y1="160" x2="860" y2="160" class="sv-l"/>
+        <ellipse cx="450" cy="105" rx="360" ry="52" class="sv-boxw" opacity="0.55"/>
+        <line x1="90" y1="105" x2="810" y2="105" class="sv-la"/>
+        <rect x="76" y="88" width="14" height="72" class="sv-box"/>
+        <rect x="810" y="88" width="14" height="72" class="sv-box"/>
+        <text x="83" y="80" text-anchor="middle" class="sv-ts">1.5 м</text>
+        <text x="817" y="80" text-anchor="middle" class="sv-ts">1.5 м</text>
+        <text x="450" y="45" text-anchor="middle" class="sv-tw">1-я зона Френеля: r = 13 м @ 433 МГц, 1 км</text>
+        <text x="450" y="185" text-anchor="middle" class="sv-ts">~80% эллипса — В ЗЕМЛЕ → +10…20 дБ потерь поверх FSPL</text>
+      </svg>
+      </div>
+    </figure>
+    <p>Для чистого линка нужно свободными ~60% первой зоны Френеля. На 433 МГц и дистанции 1 км её
+    радиус в середине — 13 м (на 869 — 9.3 м). Два человека с устройствами в руках на высоте
+    1.5 м «видят» друг друга глазами, но эллипс волны пашет землю. Отсюда же двухлучевой режим:
+    после излома потери идут как 40·log(d), а не 20·log(d) — каждое удвоение дистанции стоит
+    12 дБ вместо 6.</p>
+    <p><strong>Сценарий:</strong> «в поле было 8 км, а тут ровная дорога и на 3 км уже не берёт» —
+    смотри не на карту, а на высоту антенн. +2 метра палки у одного из узлов возвращают линк.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.4 Многолучёвка: шаг в сторону = ±20 дБ</h4>
+    <figure>
+      <div class="diagram">
+      <svg viewBox="0 0 900 150" role="img" aria-label="Провалы сигнала из-за многолучёвки">
+        <polyline class="sv-la" points="40,60 90,45 140,70 190,40 240,95 290,50 340,42 390,110 440,55 490,48 540,120 590,60 640,44 690,75 740,50 790,100 840,55"/>
+        <line x1="40" y1="130" x2="860" y2="130" class="sv-l"/>
+        <text x="450" y="147" text-anchor="middle" class="sv-ts">позиция приёмника, шаг сетки ≈ λ/2 = 35 см @ 433 МГц</text>
+        <text x="540" y="135" text-anchor="middle" class="sv-tw">▼ null</text>
+        <text x="60" y="30" class="sv-ts">RSSI</text>
+      </svg>
+      </div>
+    </figure>
+    <p>В городе/помещении сигнал приходит десятком отражённых копий. Там, где они складываются
+    в противофазе — глубокий провал (фейд), и провалы стоят через каждые пол-волны: 35 см на 433,
+    17 см на 869. Устройство на подоконнике работает, на столе в метре — нет.</p>
+    <p><strong>В нашем стеке:</strong> это главная причина «мерцающего» RSSI в nodedb и узлов,
+    прыгающих online/away. Плюс тело человека — экран с −3…−10 дБ: устройство в заднем кармане
+    «смотрит» сквозь хозяина. Совет пользователю прямо в приложении: не берёт — сдвинь на полметра.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.5 Near-far: свой же 1-ваттник глушит дальнего собеседника</h4>
+    <p>Динамический диапазон входа приёмника конечен. Если сосед в 5 метрах передаёт 30 dBm,
+    на нашем входе примерно −9 dBm — LNA в глубокой компрессии, и слабый пакет −125 dBm от узла
+    за 10 км в этот момент просто не существует (десенс/блокировка). Никакая ортогональность SF
+    не спасает: затыкается сам аналоговый фронтенд.</p>
+    <p><strong>Сценарий:</strong> базовый лагерь, три устройства на столе, дальняя группа на пределе
+    дальности. Пока лагерные болтают (а на SLOW каждый чих — секунда эфира), дальние пакеты
+    теряются пачками. Лечится: лагерным — FAST и/или <code>set_tx_power</code> вниз (21 dBm за глаза
+    для 5 метров), дальним — SLOW. Разные группы мощности — легитимная причина довести
+    CHAN_SWITCH до ума и развести их по каналам.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.6 Голосовое из 31 фрагмента — русская рулетка без ретраев</h4>
+    <p>Сборка голоса требует <em>все</em> фрагменты. Переспроса недостающих нет: один потерянный —
+    и через 60 с таймаут молча выбрасывает 30 доставленных. Математика беспощадна: при честности
+    канала 95% на фрагмент вероятность собрать 31 из 31 = 0.95³¹ ≈ <strong>20%</strong>.
+    При 99% — уже 73%, при 99.9% — 97%.</p>
+    <p><strong>Мораль:</strong> голосовые живут только на «жирном» линке (RSSI хотя бы −100…−105
+    на SLOW). На пределе дальности — текст и quick-phrases: одиночный пакет либо дошёл, либо ACK
+    не пришёл и понятно, что переслать. Инженерное лечение — в §13: NACK-переспрос недостающих
+    фрагментов по маске + FEC (даже XOR-паритет 1 к 8 поднял бы 20% → ~60%).</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.7 FSK-звонок: реалтайм стоит 29 дБ дальности</h4>
+    <p>Голос в реальном времени требует битрейта ≥ битрейта кодека непрерывно — LoRa-чирпы
+    такое не тянут, потому PTT переключается в GFSK 19.2 кбит/с. Но у FSK нет processing gain:
+    нужен SNR ≈ +8 дБ вместо −12.5. Бюджет линка падает со 149 до ~130 дБ — в двухлучевой модели
+    это ×3–5 по дистанции. Профиль «Дальнобой» (2.4 кбит/с, RxBw 41.7 кГц) возвращает ~8 дБ,
+    но кадры 40 Б летят по 170 мс — отсюда правка V2.8.2 с таймаутом 800 мс (<code>sx1278.c:498</code>).</p>
+    <p><strong>Плюс скрытая цена:</strong> на время звонка оба узла выпадают из LoRa-сети —
+    не ретранслируют, не принимают SOS. PTT_START уходит с hop_limit=0 сознательно: реалтайм
+    через relay всё равно невозможен, но это значит, что звонок работает только в радиусе
+    прямого линка FSK.</p>
+  </div>
+
+  <div class="phys con">
+    <h4><span class="tag">против</span>11.8 Чужой эфир: мы не одни на частоте</h4>
+    <p>433.125 МГц — сердце LPD433: брелоки, метеодатчики, дешёвые рации. 869.525 — слот
+    Meshtastic EU_868: чужие меш-сети с теми же SF законно жгут те же 10% duty cycle.
+    Для LoRa чужой пакет того же SF/BW — такая же коллизия, как свой; CAD честно скажет
+    «занято» и наш TX будет ждать (до 6 backoff-ов), а E220 даже не заметит и передаст в кашу.
+    Приятный бонус sync word 0x12: чужие «public» сети (0x34) наши пакеты не декодируют
+    и наоборот — но <em>энергия</em> в канале мешает всем одинаково.</p>
+    <p><strong>Симптом:</strong> в городе «немотивированные» потери на пустом, казалось бы, канале —
+    посмотрите на воздух SDR-свистком, там жизнь. Инженерный ответ — довести до ума
+    <code>CHAN_SWITCH</code> (0x0A): протокол миграции всей сети на чистый канал уже заложен
+    в enum, но не реализован.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="bugs">
+  <h2><span class="sec">§12</span>Грабли и подозрения на баги</h2>
+  <p>Найдено статическим чтением кода; на железе не проверялось (железо дома). Отсортировано по серьёзности.</p>
+
+  <div class="badbox">
+    <strong>B1 · packet_id уникален per-фрагмент → сборка мультифрагментов, похоже, сломана.</strong><br>
+    <code>proto25_build()</code> назначает <em>новый</em> <code>packet_id</code> каждому вызову
+    (<code>proto25.c:96</code>), а <code>bridge_tx_task</code>/<code>voice_tx_task</code> зовут его
+    на каждый фрагмент. Приёмник же считает фрагменты одной посылкой только при равных
+    <code>(src, packet_id)</code> (<code>bridge.c:190–192</code>, <code>bridge.c:790</code>) — каждый
+    следующий фрагмент <em>сбрасывает сессию</em>, и маска никогда не заполняется. Однофрагментные
+    тексты (&lt;155 Б, т.е. ~77 кириллических символов) работают, длинные тексты и голосовые — по этой
+    логике не должны собираться вообще. <strong>Проверить на железе первым делом</strong>: если голос
+    реально ходил — я неправ и хочу знать почему; если нет — фикс: передавать pkt_id параметром в
+    <code>proto25_build</code> (или отдельный <code>proto25_build_frag</code>).
+  </div>
+
+  <div class="badbox">
+    <strong>B2 · ACK не ссылается на подтверждаемый пакет.</strong><br>
+    <code>TEXT_ACK</code> строится пустым и получает <em>свой собственный</em> packet_id из счётчика
+    получателя (<code>bridge.c:626</code>). Отправитель ищет его в
+    <code>seq_map_find(hdr.packet_id)</code> (<code>bridge.c:662</code>) — но там лежит id из
+    <em>его</em> счётчика. Совпадение возможно только случайно. Итог: <code>evt:ack</code> уходит в
+    телефон с мусорным seq (fallback), и «галочки доставки» в приложении держатся на честном слове.
+    Фикс: класть подтверждаемый packet_id (2 байта) в payload ACK.
+  </div>
+
+  <div class="tblwrap"><table>
+    <tr><th>#</th><th>Что</th><th>Где</th><th>Последствие</th></tr>
+    <tr><td class="num">B3</td><td>Одна сессия сборки фрагментов на всех отправителей</td><td><code>bridge.c:169</code></td><td>два узла шлют длинное одновременно → оба сообщения гибнут, взаимный сброс сессии</td></tr>
+    <tr><td class="num">B4</td><td><code>assembled[assembled_len]='\0'</code> при 8 полных фрагментах пишет в байт 1240 буфера размером 1240</td><td><code>bridge.c:633</code></td><td>однобайтовое переполнение static-буфера при максимальном сообщении</td></tr>
+    <tr><td class="num">B5</td><td>packet_id стартует с 1 после каждой перезагрузки</td><td><code>proto25.c:47</code></td><td>ребут в течение 60 с → первые пакеты совпадают с dedup-записями соседей → молча дропаются. Фикс: <code>esp_random()</code> как стартовое значение</td></tr>
+    <tr><td class="num">B6</td><td><code>CHAN_SWITCH</code>, <code>READ_RECEIPT</code>, <code>NODE_BYE</code>, <code>GROUP_INFO</code>, <code>SOS_ACK</code> объявлены, но не обрабатываются</td><td><code>proto25.h:22–33</code></td><td>мёртвые коды протокола; CHAN_SWITCH жалко — полезнейшая фича</td></tr>
+    <tr><td class="num">B7</td><td>Шифрование отсутствует (FLAG25_ENCRYPTED зарезервирован)</td><td>—</td><td>весь эфир — открытый текст с читаемыми node_id; любой SDR слушает переписку</td></tr>
+    <tr><td class="num">B8</td><td>E220 RX склеивает пакеты, пришедшие с паузой &lt;20 мс</td><td><code>e220.c:210</code></td><td>второй пакет теряется (парсер возьмёт первый по payload_len); редко, но на FAST реальнее</td></tr>
+    <tr><td class="num">B9</td><td>Мусор в репо: <code>main/..c</code> (пустой app_main), неиспользуемый <code>mempool.c</code>, дубль-инклюды <code>config.h</code>, поехавшие отступы в <code>main.c</code>, два дерева display</td><td>—</td><td>гигиена; <code>..c</code> может напугать сборку/IDE</td></tr>
+    <tr><td class="num">B10</td><td>seq_map всего 16 слотов и без валидации</td><td><code>bridge.c:140</code></td><td>при активной переписке маппинг ACK→seq вытесняется; усугубляет B2</td></tr>
+    <tr><td class="num"><strong>B11</strong></td><td><strong>Rate-limit проверяется ДО dedup</strong> — relay-копии чужих пакетов съедают токены оригинального отправителя</td><td><code>bridge.c:564</code> vs <code>:584</code></td><td>в меше из 3+ узлов каждое сообщение тратит 2–3 токена из бёрста 6; после пары быстрых сообщений следующие <strong>молча дропаются</strong>. Главный кандидат на «сообщения вовсе не доходят» при нескольких узлах. Фикс: dedup-проверку поднять выше rate-limit</td></tr>
+    <tr><td class="num"><strong>B12</strong></td><td><code>proto25_parse</code> не проверяет <code>payload_len ≤ 155</code></td><td><code>proto25.c:135</code>, <code>bridge.c:538</code></td><td>пакет с payload_len до 231 проходит проверку длины и memcpy переполняет стековый буфер <code>payload[155]</code> в rx_task на 76 байт — крэш/RCE-вектор от кривого или вражеского пакета</td></tr>
+    <tr><td class="num">B13</td><td><code>nodedb_expire_stale()</code> никогда не вызывается</td><td><code>nodedb.c:107</code></td><td>статусы узлов вечно ONLINE, счётчик nodes_online врёт, вытеснение из полной БД (32) невозможно — новые узлы после 32-го не добавляются</td></tr>
+    <tr><td class="num">B14</td><td>Команда <code>speed</code> меняет SF только локально</td><td><code>bridge.c:1013</code></td><td>рассинхрон скоростей между узлами = полная взаимная глухота, пока оба не переключатся; синхронизации (CHAN_SWITCH) нет</td></tr>
+    <tr><td class="num">B15</td><td>rx_task блокируется на ~1.3 с при выдаче голосового в BLE (60 мс × ~21 чанк) и на I2C-отрисовке дисплея</td><td><code>bridge.c:526</code>, <code>display.c</code></td><td>пакеты, пришедшие в это окно, теряются (FIFO SX127x — один пакет); выдачу в BLE стоит увести из rx_task</td></tr>
+    <tr><td class="num">B16</td><td>Имена узлов не экранируются в JSON</td><td><code>bridge.c:246</code>, <code>:1311</code></td><td>имя с кавычкой/бэкслэшем ломает evt:node_seen и nodes-дамп — телефон теряет разбор потока событий</td></tr>
+    <tr><td class="num">B17</td><td>PTT_START переводит приёмник в FSK безусловно</td><td><code>bridge.c:856</code></td><td>узел глохнет для LoRa до 30 с (watchdog), даже если пользователь не принял звонок / телефон не подключён</td></tr>
+    <tr><td class="num">B18</td><td>Переполнение notify-очереди (8) молча теряет события</td><td><code>ble_server.c:278</code></td><td>сообщение принято радио, но <code>evt:msg</code> до телефона не дошёл — ACK при этом уже отправлен, отправитель видит «доставлено»</td></tr>
+  </table></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="roadmap">
+  <h2><span class="sec">§13</span>Что обновить / добавить / переделать</h2>
+
+  <h3>Сначала — починить (быстро, без Android под рукой можно писать код и юнит-тесты)</h3>
+  <ol>
+    <li><strong>B1+B2 из §12:</strong> shared packet_id для фрагментов + ACK с payload=подтверждаемый id.
+    Это фундамент — пока он под вопросом, «работает голос» может означать «работал на столе на одном фрагменте».</li>
+    <li><strong>B11:</strong> dedup до rate-limit — три строки перестановки, убирает молчаливые дропы в меше.</li>
+    <li><strong>B12:</strong> одна проверка <code>plen &gt; PKT25_MAX_PAYLOAD</code> в parse — закрывает переполнение стека.</li>
+    <li><strong>Мультисессионная сборка:</strong> таблица из 3–4 сессий, ключ (src, pkt_id) — убирает B3 малой кровью.</li>
+    <li><strong>Случайный стартовый packet_id</strong> (B5) — одна строка.</li>
+    <li><strong>Хост-тесты proto25:</strong> кодек чистый, гоняется на ПК без железа — идеальная работа
+    «не дома»: build/parse/frag/dedup/rate-limit покрываются за вечер.</li>
+  </ol>
+
+  <h3>Архитектурные апгрейды</h3>
+  <ol>
+    <li><strong>Шифрование эфира (FLAG25_ENCRYPTED):</strong> AES-128-GCM, ключ per-group из PSK,
+    nonce = src_id+packet_id+frag. mbedTLS уже в сборке. Заголовок остаётся открытым (нужен relay),
+    payload закрывается. Это самый большой недостающий кусок для «мессенджера».</li>
+    <li><strong>NACK-переспрос фрагментов + FEC для голоса:</strong> приёмник по таймауту шлёт маску
+    недостающих (1 пакет), отправитель дошивает только их; плюс XOR-паритет каждые 8 фрагментов.
+    Превращает 20% доставки голоса на слабом линке (§11.6) в 90%+.</li>
+    <li><strong>Interrupt-driven RX:</strong> сейчас <code>rx_task</code> поллит SPI каждые 20 мс —
+    жжёт шину, мьютекс и батарею. DIO0 уже сконфигурирован на RxDone (<code>sx1278.c:93</code>) —
+    осталось повесить ISR + семафор. Для T3 на батарее это шаг к light sleep.</li>
+    <li><strong>Автопереключение скорости для голосовых</strong> (см. §9.2): если RSSI пира &gt; −100,
+    слать VOICE на FAST — минус 70% airtime. Механика смены SF уже есть в <code>sos</code>-флоу.</li>
+    <li><strong>Довести CHAN_SWITCH:</strong> объявленный протокол миграции канала — ответ на §11.8
+    (занятый канал) и §11.5 (развод групп по каналам).</li>
+    <li><strong>Пенсия legacy (protocol.c/peer_manager):</strong> heartbeat-пинги каждые ~45 с — это
+    постоянный фоновой airtime и второй парсер в горячем пути RX. Перевести присутствие целиком на
+    NODE_HELLO с адаптивным интервалом, legacy оставить за Kconfig-флагом.</li>
+    <li><strong>Store-and-forward:</strong> узел видел, что dst offline — придержать пакет в кольцевом
+    буфере NVS/RAM и отдать при появлении. Меш из «иногда включённых» устройств становится почтой.</li>
+    <li><strong>OTA по BLE:</strong> партиции уже стандартные ESP-IDF; прошивать 4 платы шнурком
+    надоест быстро.</li>
+    <li><strong>Power management для T3:</strong> light sleep между RX-окнами (или хотя бы
+    modem-sleep BLE), батарейный процент уже репортится — грех не растянуть.</li>
+    <li><strong>Гигиена:</strong> B9-список, единый источник версии (сейчас «v2.5» в логах bridge при
+    фичах V2.8), CI-сборка всех четырёх плат.</li>
+  </ol>
+
+  <h3>Идеи подальше</h3>
+  <ul>
+    <li>Адаптивный SF per-peer (авто SLOW/FAST по SNR-истории nodedb) — аналог ADR из LoRaWAN.</li>
+    <li>GPS-беконы с телефона по расписанию + «где все» на карте (тип пакета и nodedb уже готовы).</li>
+    <li>PTT на SX1268 (E22-400M33S) — драйвер ждёт bring-up; дизайн в <code>docs/VOICE_PTT_FSK.md</code>.</li>
+    <li>Codec2 вместо AMR-NB: 3.2 кбит/с и открытый кодек — голосовые в 1.5 раза короче в эфире.</li>
+    <li>Метрики качества линка в приложении: PER, средний SNR, гистограмма RSSI — данные уже в nodedb.</li>
+  </ul>
+
+  <p style="margin-top:28px;color:var(--muted);font:12.5px/1.6 var(--mono)">
+  Документ сгенерирован по исходникам EasyBridge (состояние на 2026-07-05).
+  Числа airtime — расчёт по формуле Semtech SX1276 datasheet §4.1.1.6;
+  чувствительности — типовые значения datasheet, ±2 дБ по температуре и экземпляру.
+  Всё, что помечено «проверить на железе», — проверить на железе.</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="antennas">
+  <h2><span class="sec">§14</span>Антенны: диаграмма направленности на практике</h2>
+
+  <p>Четвертьволновый штырь (17 см на 433 МГц, λ/4) — самая обычная антенна для этих плат,
+  и у неё, как у любого диполя/монополя, диаграмма направленности не сфера, а
+  <strong>сплюснутый бублик</strong>: максимум усиления — в горизонт, полный ноль — точно
+  вверх и вниз вдоль штыря. Рисунок ниже — сечение этой диаграммы в вертикальной
+  плоскости (та самая «плоская пышка», картинка из учебников по антеннам).</p>
+
+  <figure>
+    <div class="diagram" style="display:flex;flex-wrap:wrap;gap:32px;justify-content:center;align-items:flex-end">
+      <svg viewBox="0 0 320 260" width="320" role="img"
+           aria-label="Диаграмма направленности четвертьволнового штыря: два сросшихся лепестка вбок, ноль вверх и вниз">
+        <line x1="60" y1="140" x2="260" y2="140" class="sv-ld"/>
+        <circle cx="210" cy="140" r="50" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+        <circle cx="110" cy="140" r="50" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+        <line x1="160" y1="55" x2="160" y2="225" stroke="var(--ink)" stroke-width="3"/>
+        <line x1="128" y1="232" x2="192" y2="232" class="sv-l"/>
+        <text x="160" y="248" text-anchor="middle" class="sv-ts">штырь (17 см)</text>
+        <text x="265" y="136" class="sv-ta">← макс. усиление</text>
+        <text x="160" y="42" text-anchor="middle" class="sv-tw">ноль (вверх)</text>
+        <text x="160" y="248" text-anchor="middle" class="sv-ts"> </text>
+        <text x="160" y="15" text-anchor="middle" class="sv-t">Штырь строго вертикально</text>
+      </svg>
+      <svg viewBox="0 0 320 260" width="320" role="img"
+           aria-label="Та же антенна наклонена в сторону партнёра выше по склону — лепесток теперь достаёт его">
+        <line x1="30" y1="220" x2="290" y2="90" class="sv-ld"/>
+        <text x="230" y="80" class="sv-ts">партнёр выше по склону</text>
+        <g transform="rotate(-32 160 140)">
+          <circle cx="210" cy="140" r="50" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+          <circle cx="110" cy="140" r="50" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+          <line x1="160" y1="55" x2="160" y2="225" stroke="var(--ink)" stroke-width="3"/>
+        </g>
+        <text x="160" y="15" text-anchor="middle" class="sv-t">Штырь наклонён к склону</text>
+        <text x="160" y="248" text-anchor="middle" class="sv-ta">лепесток накрыл партнёра ↗</text>
+      </svg>
+    </div>
+    <figcaption>Рис. 8 — Диаграмма — фигура вращения этого сечения вокруг штыря (в 3D это
+    действительно «пышка», сплюснутая по полюсам). Слева: вертикальный штырь, максимум
+    светит строго в горизонт. Справа: тот же штырь, наклонённый на ~30° — лепесток
+    поворачивается вместе с ним и накрывает партнёра, стоящего выше по склону. Именно
+    поэтому в горах короткий штатный штырёк, направленный «в собеседника», часто добивает
+    дальше, чем мощная «усиленная» всенаправленная антенна с ещё более сплюснутым
+    лепестком, светящим точно в никуда (§11 — near-far и рельеф).</figcaption>
+  </figure>
+
+  <p>Чем выше заявленный gain у «всенаправленной» антенны (коллинеар, «фибергласс 8 dBi»),
+  тем сильнее лепесток прижат к горизонту — несколько диполей в фазе складывают энергию
+  в узкий блин почти без запаса по углу. На ровном поле это чистый выигрыш; на склоне,
+  где собеседник выше или ниже вас на десятки метров, такая антенна может проиграть
+  простому штырю, который хотя бы можно наклонить руками. Численно и интерактивно
+  это можно покрутить в отдельном RF-полигоне — рельеф лепится мышкой, антенны крутятся,
+  линк-бюджет считается вживую по тем же формулам (Френель, дифракция через нож-край,
+  двухлучевая модель), что и в §9/§11 этого документа.</p>
+</section>
+
+</div>
+
+</body>
+</html>

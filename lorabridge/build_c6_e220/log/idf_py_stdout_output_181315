@@ -1,0 +1,28 @@
+Command: ninja all
+[1/19] Performing build step for 'bootloader'
+[1/1] cd /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader/esp-idf/esptool_py && /home/philipbox/.espressif/python_env/idf5.5_py3.14_env/bin/python /home/philipbox/esp/esp-idf-v5.5.1/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/bootloader/bootloader.bin
+Bootloader binary size 0x57e0 bytes. 0x2820 bytes (31%) free.
+[2/19] No install step for 'bootloader'
+[3/19] Completed 'bootloader'
+[4/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/radio_stub.c.obj
+[5/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+[6/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/radio_e220.c.obj
+[7/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/radio_registry.c.obj
+[8/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/radio_sx126x.c.obj
+[9/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/radio_sx127x.c.obj
+[10/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/lora_manager.c.obj
+[11/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/ptt.c.obj
+[12/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/imgfsk.c.obj
+[13/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/sx1278.c.obj
+[14/19] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/bridge.c.obj
+[15/19] Linking C static library esp-idf/main/libmain.a
+[16/19] Generating esp-idf/esp_system/ld/sections.ld
+[17/19] Linking CXX executable easybridge.elf
+[18/19] Generating binary image from built executable
+esptool.py v4.12.dev1
+Creating esp32c6 image...
+Merged 1 ELF section
+Successfully created esp32c6 image.
+Generated /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/easybridge.bin
+[19/19] cd /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/esp-idf/esptool_py && /home/philipbox/.espressif/python_env/idf5.5_py3.14_env/bin/python /home/philipbox/esp/esp-idf-v5.5.1/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/partition_table/partition-table.bin /home/philipbox/easybridge-v2.9/lorabridge/build_c6_e220/easybridge.bin
+easybridge.bin binary size 0xc2060 bytes. Smallest app partition is 0x100000 bytes. 0x3dfa0 bytes (24%) free.

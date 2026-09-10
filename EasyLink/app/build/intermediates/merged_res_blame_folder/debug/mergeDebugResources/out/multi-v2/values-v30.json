@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "easylink.yvak.inc.app-mergeDebugResources-58:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/home/philipbox/.gradle/caches/9.1.0/transforms/8402fcd677bd898fd4c673d596a3364c/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

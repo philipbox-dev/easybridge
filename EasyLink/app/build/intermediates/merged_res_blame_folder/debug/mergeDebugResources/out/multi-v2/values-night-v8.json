@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "easylink.yvak.inc.app-mergeDebugResources-58:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "/home/philipbox/easybridge-v2.9/EasyLink/app/src/main/res/values-night/colors.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "43",
+                        "endOffsets": "94"
+                    }
+                },
+                {
+                    "source": "/home/philipbox/.gradle/caches/9.1.0/transforms/3e838c2a342e77ed9ed6b2033771d337/transformed/appcompat-1.7.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    },
+                    "to": {
+                        "startLines": "3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "99,169,253,337,433,535,637,731",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "164,248,332,428,530,632,726,815"
+                    }
+                }
+            ]
+        }
+    ]
+}

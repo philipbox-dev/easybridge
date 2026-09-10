@@ -1,0 +1,16 @@
+{
+  "name": "EasyBridge LilyGO T3",
+  "version": "2.9.6",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "images/easybridge_t3_v161.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

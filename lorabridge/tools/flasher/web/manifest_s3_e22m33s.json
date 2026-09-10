@@ -1,0 +1,16 @@
+{
+  "name": "EasyBridge S3+E22-M33S",
+  "version": "2.9.6",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "images/easybridge_s3_e22m33s.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}

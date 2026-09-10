@@ -1,0 +1,16 @@
+{
+  "name": "EasyBridge C6+E220",
+  "version": "2.9.6",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-C6",
+      "parts": [
+        {
+          "path": "images/easybridge_c6_e220.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
