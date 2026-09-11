@@ -1,3 +1,4 @@
+<img src="image1.png" alt="EasyBridge" width="160">
 # EasyBridge (formerly LoRa Bridge)
 
 Прошивка LoRa-мессенджера. Часть экосистемы **EasyLink**
